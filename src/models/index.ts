@@ -1,5 +1,5 @@
-import { OpenGPT } from "./openGPT";
+import { ChatGPT } from "./gpt";
 
 export {
-  OpenGPT,
+  ChatGPT as GPT
 }

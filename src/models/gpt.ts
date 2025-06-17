@@ -1,12 +1,9 @@
-import { CommonModel } from "./common";
+import { ChatResponse, FailCB, SuccessCB } from "types";
 
-import { FailCB, SuccessCB } from "types";
-
-export class OpenGPT extends CommonModel {
+export class ChatGPT {
   puter: any;
 
-  constructor(puter?: any) {
-    super();
+  constructor(puter?: any, model?: string) {
     if (puter) {
       this.puter = puter;
     } else {
@@ -37,5 +34,25 @@ export class OpenGPT extends CommonModel {
     }).catch((error: any) => {
       if (failCB) failCB(error);
     });
+  }
+
+  parseMessage(message: any): ChatResponse {
+    let messageResponse = {
+      annotations: [],
+      content: "",
+      role: "",
+    };
+
+    if (message) {
+      messageResponse = {
+        annotations: message?.annotations,
+        content: message?.content,
+        role: message?.role,
+      };
+    }
+    
+    return {
+      message: messageResponse
+    } as ChatResponse;
   }
 }
