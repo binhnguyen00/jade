@@ -4,8 +4,8 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 import { defineConfig } from "vite";
 
-function viteConfig() {
-  const config = defineConfig({
+export default function viteConfig() {
+  return defineConfig({
     root: path.resolve(__dirname),
     plugins: [
       react(),
@@ -14,24 +14,22 @@ function viteConfig() {
     build: {
       chunkSizeWarningLimit: 1000,
       emptyOutDir: true,
-      outDir: path.resolve(__dirname, './dist'),
+      outDir: path.resolve(__dirname, "./dist"),
       rollupOptions: {
         output: {
           manualChunks(id) { // split into chunks
-            if (id.includes('dist')) {
-              return 'vendor';
-            }
-            if (id.includes('node_modules')) {
-              if (id.includes('react-dom')) {
-                return 'react-dom';
+            if (id.includes("node_modules")) {
+              if (id.includes("react-dom")) {
+                return "react-dom";
               }
-              if (id.includes('react-router-dom')) {
-                return 'react-router-dom';
+              if (id.includes("react-router-dom")) {
+                return "react-router-dom";
               }
-              if (id.includes('react')) {
-                return 'react';
+              if (id.includes("react")) {
+                return "react";
               }
             }
+            return "vendor"
           }
         }
       }
@@ -41,7 +39,4 @@ function viteConfig() {
       open: true,
     },
   })
-  return config;
 }
-
-export default viteConfig();
