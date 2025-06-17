@@ -1,7 +1,8 @@
 import React from "react";
 
+import { ChatGPT } from "models";
+
 import { useScriptTag } from "./useScriptTag";
-import { ChatGPT } from "../models/gpt";
 
 export function useOpenGPT() {
   const { success, error } = useScriptTag("https://js.puter.com/v2/");

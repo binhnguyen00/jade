@@ -1,7 +1,8 @@
 import { ChatResponse, FailCB, SuccessCB } from "types";
 
-export class ChatGPT {
+export class DeepSeek {
   puter: any;
+  model: string;
 
   constructor(puter?: any) {
     if (puter) {
@@ -9,6 +10,7 @@ export class ChatGPT {
     } else {
       this.puter = window.puter;
     }
+    this.model = "deepseek-chat"
   }
 
   chat({ prompt, successCB, failCB }: {
@@ -16,20 +18,7 @@ export class ChatGPT {
     successCB: SuccessCB,
     failCB?: FailCB
   }) {
-    this.puter.ai.chat(prompt).then((response: any) => {
-      successCB(this.parseMessage(response.message));
-    }).catch((error: any) => {
-      if (failCB) failCB(error);
-    });
-  }
-
-  chatWithImage({ prompt, imageUrl, successCB, failCB }: { 
-    prompt: string, 
-    imageUrl: string, 
-    successCB: SuccessCB, 
-    failCB?: FailCB 
-  }) {
-    this.puter.ai.chat(prompt, imageUrl).then((response: any) => {
+    this.puter.ai.chat(prompt, { model: this.model }).then((response: any) => {
       successCB(this.parseMessage(response.message));
     }).catch((error: any) => {
       if (failCB) failCB(error);

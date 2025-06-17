@@ -9,7 +9,7 @@ export function UIOpenGPT() {
   const { openGPT, success } = useOpenGPT();
   const [ content, setContent ] = React.useState<string>("");
   const form = useForm({
-    mode: 'uncontrolled',
+    mode: "controlled",
     initialValues: {
       prompt: "",
     },
@@ -41,9 +41,9 @@ export function UIOpenGPT() {
     <form onSubmit={form.onSubmit((values) => ask(values.prompt))}>
       <Textarea
         label="Prompt"
-        placeholder="What's My Name?"
         autosize maxRows={10}
         key={form.key("prompt")}
+        required
         {...form.getInputProps("prompt")}
       />
       <Group justify="flex-end" mt="md">
