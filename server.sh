@@ -76,9 +76,15 @@ function typescriptCheck() {
 
 function run() {
   if hasOpt "-dev" $@; then
-    pnpm vite
+    typescriptCheck
+    if [ $? -eq 0 ]; then
+      pnpm vite
+    fi
   elif hasOpt "-server" $@; then
-    pnpm vite
+    typescriptCheck
+    if [ $? -eq 0 ]; then
+      pnpm vite
+    fi
   fi
 }
 
