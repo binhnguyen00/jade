@@ -2,7 +2,7 @@
   "name": "jade",
   "description": "An Open GPT Client",
   "author": {
-    "name": "binh.nguyen - Jack",
+    "name": "binh.nguyen - JackJack",
     "email": "jackjack2000.kahp@gmail.com",
     "url": "https://github.com/binhnguyen00"
   },
@@ -15,7 +15,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "server": "vite",
+    "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,10 +24,13 @@
     "react-dom": "^19.0.2"
   },
   "devDependencies": {
+    "@types/node": "^24.0.3",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
+    "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "^5.5.2",
-    "vite": "^5.0.8"
+    "vite": "^6.3.5",
+    "vite-tsconfig-paths": "^5.1.4",
+    "typescript": "^5.5.2"
   }
 }
