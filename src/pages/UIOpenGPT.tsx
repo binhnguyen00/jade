@@ -1,4 +1,6 @@
 import React from "react";
+import { useForm } from "@mantine/form";
+import { Textarea, Group, Button } from "@mantine/core";
 
 import { useOpenGPT } from "hooks";
 import { ChatResponse } from "types";
@@ -6,10 +8,19 @@ import { ChatResponse } from "types";
 export function UIOpenGPT() {
   const { openGPT, success } = useOpenGPT();
   const [ content, setContent ] = React.useState<string>("");
+  const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: {
+      prompt: "",
+    },
+    validate: {
+      prompt: (value) => value.trim() === "" ? "Prompt is required" : null,
+    },
+  })
 
-  const ask = () => {
+  const ask = (prompt: string) => {
     openGPT.chat({ 
-      prompt: "What's My Name?",
+      prompt: prompt,
       successCB: (response: ChatResponse) => {
         setContent(response.message.content)
       }
@@ -27,20 +38,20 @@ export function UIOpenGPT() {
   }
 
   return (
-    <div>
-      <h1>
-        Jade
-        {success ? "✅" : "❌"}
-      </h1>
-      <button onClick={ask}>
-        Ask
-      </button>
-      <button onClick={askWithImage}> 
-        Ask with image
-      </button>
+    <form onSubmit={form.onSubmit((values) => ask(values.prompt))}>
+      <Textarea
+        label="Prompt"
+        placeholder="What's My Name?"
+        autosize maxRows={10}
+        key={form.key("prompt")}
+        {...form.getInputProps("prompt")}
+      />
+      <Group justify="flex-end" mt="md">
+        <Button type="submit">Submit</Button>
+      </Group>
       <p>
         {content}
       </p>
-    </div>
-  )
+    </form>
+  );
 }
