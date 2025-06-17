@@ -15,7 +15,7 @@ elif [[ "$OSTYPE" == "win32" ]]; then
   windowsOS=true;
 fi
 
-function has_opt() {
+function hasOpt() {
   OPT_NAME=$1
   shift
   for i in "$@"; do
@@ -26,7 +26,7 @@ function has_opt() {
   return 1  # false in bash
 }
 
-function get_opt() {
+function getOpt() {
   OPT_NAME=$1
   DEFAULT_VALUE=$2
   shift
@@ -43,26 +43,26 @@ function get_opt() {
 }
 
 function install() {
-  if has_opt "-clean" $@; then
+  if hasOpt "-clean" $@; then
     rm -rf node_modules dist pnpm-lock.yaml
   fi
   pnpm install
 }
 
 function build() {
-  if has_opt "-clean" $@; then
+  if hasOpt "-clean" $@; then
     ./mini-app.sh install -clean
   fi
-  typescript_check
+  typescriptCheck
   if [ $? -eq 0 ]; then
     pnpm vite build
   fi
 }
 
-function typescript_check() {
+function typescriptCheck() {
   echo -e "${BLUE}Checking TypeScript...${NO_COLOR}"
-  pnpm tsc -b
-  
+  pnpm ts-check
+
   if [ $? -eq 0 ]; then
     echo -e "${GREEN}TypeScript check passed.${NO_COLOR}"
     echo ""
@@ -74,11 +74,22 @@ function typescript_check() {
   fi
 }
 
-function show_help() {
+function run() {
+  if hasOpt "-dev" $@; then
+    pnpm vite
+  elif hasOpt "-server" $@; then
+    pnpm vite
+  fi
+}
+
+function showHelp() {
   echo """
 ./server.sh [COMMAND] [OPTION]
 
 Commands:
+  build
+  install
+  run [-dev | -server]
 
   """
 }
@@ -88,7 +99,7 @@ if [ -n "$COMMAND" ]; then
   shift
 else
   echo -e "${ORANGE}No command provided. Showing help...${NO_COLOR}"
-  show_help
+  showHelp
   exit 1
 fi
 
@@ -96,6 +107,8 @@ if [ "$COMMAND" = "build" ] ; then
   build $@
 elif [ "$COMMAND" = "install" ] ; then
   install $@
+elif [ "$COMMAND" = "run" ] ; then
+  run $@
 else
-  show_help
+  showHelp
 fi
