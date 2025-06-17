@@ -1,5 +1,7 @@
 import React from "react";
 
+import { SuccessCB, FailCB } from "types";
+
 import { useScriptTag } from "./useScriptTag";
 
 export class OpenGPT {
@@ -13,19 +15,40 @@ export class OpenGPT {
     }
   }
 
-  chat({ prompt }: {
-    prompt: string
+  chat({ prompt, successCB, failCB }: {
+    prompt: string,
+    successCB: SuccessCB,
+    failCB?: FailCB
   }) {
     this.puter.ai.chat(prompt).then((response: any) => {
-      console.log(response);
+      successCB({
+        message: {
+          annotations: [],
+          content: response.message?.content,
+          role: response.message?.role,
+        }
+      });
+    }).catch((error: any) => {
+      if (failCB) failCB(error);
     });
   }
 
-  chatWithImage({ prompt, imageUrl }: { 
-    prompt: string, imageUrl: string 
+  chatWithImage({ prompt, imageUrl, successCB, failCB }: { 
+    prompt: string, 
+    imageUrl: string, 
+    successCB: SuccessCB, 
+    failCB?: FailCB 
   }) {
     this.puter.ai.chat(prompt, imageUrl).then((response: any) => {
-      console.log(response);
+      successCB({
+        message: {
+          annotations: [],
+          content: response.message?.content,
+          role: response.message?.role,
+        }
+      });
+    }).catch((error: any) => {
+      if (failCB) failCB(error);
     });
   }
 }
@@ -38,7 +61,7 @@ export function useOpenGPT() {
     if (success) {
       setOpenGPT(new OpenGPT(window.puter));
     } else {
-      setOpenGPT(window.puter as any);
+      setOpenGPT(new OpenGPT());
     }
   }, [ success, window.puter ]);
 
