@@ -1,46 +1,25 @@
-import React from "react";
+import React from 'react';
+import { createTheme, MantineProvider } from '@mantine/core';
 
-import { useOpenGPT } from "hooks";
-import { ChatResponse } from "types";
+import { UIHome } from "pages";
+
+import '@mantine/core/styles.css';
+// other css files are required only if
+// you are using components from the corresponding package
+// import '@mantine/dates/styles.css';
+// import '@mantine/dropzone/styles.css';
+// import '@mantine/code-highlight/styles.css';
+// ...
+
+
+const theme = createTheme({
+  /** Put your mantine theme override here */
+});
 
 export function Application() {
-  const { openGPT, success } = useOpenGPT();
-  const [ content, setContent ] = React.useState<string>("");
-
-  const ask = () => {
-    openGPT.chat({ 
-      prompt: "What's My Name?",
-      successCB: (response: ChatResponse) => {
-        setContent(response.message.content)
-      }
-    });
-  }
-
-  const askWithImage = () => {
-    openGPT.chatWithImage({ 
-      prompt: "tell me what is this image about?",
-      imageUrl: "https://assets.puter.site/doge.jpeg",
-      successCB: (response: ChatResponse) => {
-        setContent(response.message.content)
-      }
-    });
-  }
-
   return (
-    <div>
-      <h1>
-        Jade
-        {success ? "✅" : "❌"}
-      </h1>
-      <button onClick={ask}>
-        Ask
-      </button>
-      <button onClick={askWithImage}> 
-        Ask with image
-      </button>
-      <p>
-        {content}
-      </p>
-    </div>
+    <MantineProvider theme={theme}>
+      <UIHome/>
+    </MantineProvider>
   )
 }

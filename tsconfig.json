@@ -9,12 +9,13 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
+    "skipLibCheck": true,
     "declarationDir": "dist/@types",
     "jsx": "react",
     "target": "es2024",
     "module": "es2022",
     "outDir": "dist",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
   },
   "exclude": [
     "node_modules",
@@ -22,5 +23,5 @@
   ],
   "include": [
     "src/**/*",
-  ]
+  ],
 }
