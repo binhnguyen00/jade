@@ -2,19 +2,18 @@ import React from "react";
 import { useForm } from "@mantine/form";
 import { Textarea, Group, Button, Select, Container } from "@mantine/core";
 
-import { ChatResponse } from "types";
-import { useDeepSeek, useOpenGPT } from "hooks";
+import { useChat } from "hooks";
+import { ChatModel, ChatResponse } from "types";
 
 export function UIChatBox() {
-  const { openGPT } = useOpenGPT();
-  const { deepSeek } = useDeepSeek();
+  const { chat } = useChat();
   const [ content, setContent ] = React.useState<string>("");
 
   const form = useForm({
     mode: "controlled",
     initialValues: {
       prompt: "",
-      model: "openai",
+      model: ChatModel.OPENAI,
     },
     validate: {
       prompt: (value) => value.trim() === "" ? "Prompt is required" : null,
@@ -23,21 +22,16 @@ export function UIChatBox() {
 
   const ask = () => {
     const { model, prompt } = form.values;
-    if (model === "openai") {
-      openGPT.chat({ 
-        prompt: prompt,
-        successCB: (response: ChatResponse) => {
-          setContent(response.message.content)
-        }
-      });
-    } else {
-      deepSeek.chat({ 
-        prompt: prompt,
-        successCB: (response: ChatResponse) => {
-          setContent(response.message.content)
-        }
-      });
-    }
+    chat({
+      model: model,
+      prompt: prompt,
+      successCB: (response: ChatResponse) => {
+        setContent(response.message.content)
+      },
+      failCB: (error: any) => {
+        console.error(error);
+      },
+    })
   }
 
   return (
@@ -49,7 +43,7 @@ export function UIChatBox() {
         <Select
           label="Pick a Model"
           key={form.key("model")}
-          data={["openai", "deepseek-chat"]}
+          data={[ChatModel.OPENAI, ChatModel.DEEPSEEK]}
           {...form.getInputProps("model")}
         />
         <Textarea
