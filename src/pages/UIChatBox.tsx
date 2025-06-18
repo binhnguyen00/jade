@@ -1,11 +1,15 @@
 import React from "react";
 import { useForm } from "@mantine/form";
-import { Textarea, Group, Button, Select, Container } from "@mantine/core";
+import { Textarea, Group, Button, Select } from "@mantine/core";
 
 import { useChat } from "hooks";
 import { ChatModel, ChatResponse } from "types";
 
-export function UIChatBox() {
+interface UIChatBoxProps {
+
+}
+
+export function UIChatBox(props: UIChatBoxProps) {
   const { chat } = useChat();
   const [ content, setContent ] = React.useState<string>("");
 
@@ -35,7 +39,7 @@ export function UIChatBox() {
   }
 
   return (
-    <Container p="xs" fluid>
+    <div>
       <form onSubmit={form.onSubmit(() => ask())}>
         <p>
           {content}
@@ -59,6 +63,6 @@ export function UIChatBox() {
           <Button type="submit">Submit</Button>
         </Group>
       </form>
-    </Container>
+    </div>
   );
 }
