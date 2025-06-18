@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ChatResponse, FailCB, SuccessCB } from "types";
+import { ChatResponse, FailCB, PuterAPI, SuccessCB, SupportModels } from "types";
 
 import { useScriptTag } from "./useScriptTag";
 
@@ -20,14 +20,16 @@ export function useOpenGPT() {
 }
 
 class ChatGPT {
-  private puter: any;
+  private puter: PuterAPI;
+  private model: SupportModels;
 
-  constructor(puter?: any) {
+  constructor(puter?: PuterAPI) {
     if (puter) {
       this.puter = puter;
     } else {
       this.puter = window.puter;
     }
+    this.model = "gpt-4o-mini"
   }
 
   chat({ prompt, successCB, failCB }: {
@@ -35,7 +37,7 @@ class ChatGPT {
     successCB: SuccessCB,
     failCB?: FailCB
   }) {
-    this.puter.ai.chat(prompt).then((response: any) => {
+    this.puter.ai.chat(prompt, { model: this.model }).then((response: any) => {
       successCB(this.parseMessage(response.message));
     }).catch((error: any) => {
       if (failCB) failCB(error);
@@ -48,14 +50,14 @@ class ChatGPT {
     successCB: SuccessCB, 
     failCB?: FailCB 
   }) {
-    this.puter.ai.chat(prompt, imageUrl).then((response: any) => {
+    this.puter.ai.chat(prompt, { model: this.model }, imageUrl).then((response: any) => {
       successCB(this.parseMessage(response.message));
     }).catch((error: any) => {
       if (failCB) failCB(error);
     });
   }
 
-  parseMessage(message: any): ChatResponse {
+  private parseMessage(message: any): ChatResponse {
     let messageResponse = {
       annotations: [],
       content: "",

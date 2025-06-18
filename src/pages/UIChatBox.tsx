@@ -16,7 +16,7 @@ export function UIChatBox() {
       model: ChatModel.OPENAI,
     },
     validate: {
-      prompt: (value) => value.trim() === "" ? "Prompt is required" : null,
+      prompt: (value) => value.trim().length === 0 ? "Prompt is required" : null,
     },
   })
 
@@ -41,16 +41,18 @@ export function UIChatBox() {
           {content}
         </p>
         <Select
-          label="Pick a Model"
+          label="Model"
           key={form.key("model")}
-          data={[ChatModel.OPENAI, ChatModel.DEEPSEEK]}
+          data={[
+            { value: ChatModel.OPENAI, label: "GPT" },
+            { value: ChatModel.DEEPSEEK, label: "DeepSeek" },
+          ]}
           {...form.getInputProps("model")}
         />
         <Textarea
           label="Prompt"
-          autosize maxRows={10}
           key={form.key("prompt")}
-          required
+          autosize maxRows={10} required
           {...form.getInputProps("prompt")}
         />
         <Group justify="flex-end" mt="md">

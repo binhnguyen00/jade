@@ -1,6 +1,8 @@
+import type { PuterAPI } from "types";
+
 declare global {
   interface Window {
-    puter?: any;
+    puter: PuterAPI;
   }
 }
 
