@@ -1,13 +1,14 @@
 import React from "react";
+
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { AppShell, Title, Group, ScrollArea, Burger, Skeleton, Text, Container, Select } from "@mantine/core";
+import { AppShell, Title, Group, ScrollArea, Burger, Text, Container, Select, Stack } from "@mantine/core";
 
 import { ChatModel } from "types";
 
 import { UIChatBox } from "./UIChatBox";
-import { UISideBar } from "./UISideBar";
 import { UIUserInput } from "./UIUserInput";
+import { UIConversations } from "./UIConversations";
 
 export function UIHome() {
   const [ mobileOpened, { toggle: toggleMobile, close: closeMobile, open: openMobile } ] = useDisclosure();
@@ -31,38 +32,32 @@ export function UIHome() {
 
       <AppShell.Header>
         <Group h="100%" px="md">
+          <Burger onClick={toggleMobile} hiddenFrom="sm" size="md"/>
+          <Burger onClick={toggleDesktop} visibleFrom="sm" size="md"/>
           <Title> Jade </Title>
-          <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm"/>
-          <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm"/>
           <Select
             key={controller.key("model")}
             data={[
               { value: ChatModel.OPENAI, label: "GPT" },
               { value: ChatModel.DEEPSEEK, label: "DeepSeek" },
             ]}
+            defaultValue={ChatModel.OPENAI}
             {...controller.getInputProps("model")}
           />
         </Group>
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        <Group justify="space-between">
+        <Stack gap="sm">
           <Text> Conversations </Text>
-        </Group>
-        {
-          Array(15)
-            .fill(0)
-            .map((_, index) => (
-              <Skeleton key={index} h={28} mt="sm" animate={false} />
-            ))
-        }
+          <UIConversations/>
+        </Stack>
       </AppShell.Navbar>
 
       <AppShell.Main style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <Container w={"60%"}>
           <ScrollArea>
-
-            <div style={{ height: "40vh" }}/>
+            <UIChatBox conversation={[]}/>
           </ScrollArea>
         </Container>
       </AppShell.Main>

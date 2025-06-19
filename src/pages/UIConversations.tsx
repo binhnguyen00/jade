@@ -1,13 +1,13 @@
 import React from "react";
 
 import { Search } from "lucide-react";
-import { TextInput, Code } from "@mantine/core";
+import { TextInput, Code, Skeleton } from "@mantine/core";
 
 interface UISideBarProps {
 
 }
 
-export function UISideBar(props: UISideBarProps) {
+export function UIConversations(props: UISideBarProps) {
   return (
     <div>
       <TextInput
@@ -19,6 +19,9 @@ export function UISideBar(props: UISideBarProps) {
         styles={{ section: { pointerEvents: 'none' } }}
         mb="sm"
       />
+      <div>
+        {Array(15).fill(0).map((number, index) => <Skeleton key={index} h={30} mt="sm" animate/>)}
+      </div>
     </div>
   )
 }
