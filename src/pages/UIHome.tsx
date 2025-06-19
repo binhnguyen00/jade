@@ -2,7 +2,7 @@ import React from "react";
 
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { AppShell, Title, Group, ScrollArea, Burger, Text, Container, Select, Stack } from "@mantine/core";
+import { AppShell, Title, Group, Burger, Text, Container, Select, Stack } from "@mantine/core";
 
 import { ChatModel } from "types";
 
@@ -17,7 +17,7 @@ export function UIHome() {
   const controller = useForm({
     mode: "controlled",
     initialValues: {
-      model: ChatModel.OPENAI,
+      model : ChatModel.OPENAI,
     }
   })
 
@@ -42,7 +42,10 @@ export function UIHome() {
               { value: ChatModel.DEEPSEEK, label: "DeepSeek" },
             ]}
             defaultValue={ChatModel.OPENAI}
-            {...controller.getInputProps("model")}
+            value={controller.getInputProps("model").value}
+            onChange={controller.getInputProps("model").onChange}
+            onBlur={controller.getInputProps("model").onBlur}
+            onFocus={controller.getInputProps("model").onFocus}
           />
         </Group>
       </AppShell.Header>
@@ -50,21 +53,24 @@ export function UIHome() {
       <AppShell.Navbar p="md">
         <Stack gap="sm">
           <Text> Conversations </Text>
-          <UIConversations/>
+          <UIConversations onSelect={(conversation) => console.log(conversation)}/>
         </Stack>
       </AppShell.Navbar>
 
       <AppShell.Main style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <Container w={"60%"}>
-          <ScrollArea>
-            <UIChatBox conversation={[]}/>
-          </ScrollArea>
+          <UIChatBox
+            />
         </Container>
       </AppShell.Main>
 
       <AppShell.Footer p="md">
         <Container w={"60%"}>
-          <UIUserInput model={controller.getValues().model}/>
+          <UIUserInput 
+            model={controller.getValues().model}
+            onSubmit={(prompt: string) => console.log(prompt)}
+            onSuccessResponse={(content: string) => console.log(content)}
+          />
         </Container>
       </AppShell.Footer>
 

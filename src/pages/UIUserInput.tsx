@@ -9,10 +9,12 @@ import { ChatModel, ChatResponse } from "types";
 
 interface UIUserInputProps {
   model: ChatModel;
+  onSuccessResponse: (content: string) => void;
+  onSubmit: (prompt: string) => void;
 }
 
 export function UIUserInput(props: UIUserInputProps) {
-  const { model } = props;
+  const { model, onSuccessResponse, onSubmit } = props;
   const { chat } = useChat();
 
   const form = useForm({
@@ -28,11 +30,12 @@ export function UIUserInput(props: UIUserInputProps) {
 
   const ask = () => {
     const { model, prompt } = form.values;
+    onSubmit(prompt);
     chat({
       model: model,
       prompt: prompt,
       successCB: (response: ChatResponse) => {
-        console.log(response.message.content);
+        onSuccessResponse(response.message.content);
       },
       failCB: (error: any) => {
         console.error(error);
@@ -52,7 +55,7 @@ export function UIUserInput(props: UIUserInputProps) {
               <Grid>
                 <Grid.Col span={11}> {children} </Grid.Col>
                 <Grid.Col span={1}> 
-                  <Button type="submit">
+                  <Button type="submit" color="dark">
                     <SendHorizonal />
                   </Button>
                 </Grid.Col>
