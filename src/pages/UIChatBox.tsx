@@ -1,5 +1,6 @@
 import React from "react";
 import { SendHorizonal } from "lucide-react";
+
 import { useForm } from "@mantine/form";
 import { Textarea, Group, Button, Select, Container, Stack, ScrollArea, Box } from "@mantine/core";
 
@@ -12,7 +13,7 @@ interface UIChatBoxProps {
 
 export function UIChatBox(props: UIChatBoxProps) {
   const { chat } = useChat();
-  const [content, setContent] = React.useState<string>("");
+  const [ content, setContent ] = React.useState<string>("");
 
   const form = useForm({
     mode: "controlled",
