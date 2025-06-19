@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Textarea, Group, Button, Select, Container, Stack, ScrollArea, Box } from "@mantine/core";
+import { Paper } from "@mantine/core";
 
 import { Conversation } from "types";
 

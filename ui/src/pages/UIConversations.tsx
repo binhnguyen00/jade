@@ -1,6 +1,6 @@
 import React from "react";
 import { Search } from "lucide-react";
-import { TextInput, Code, Stack, Text, Button } from "@mantine/core";
+import { TextInput, Code, Stack, Text, Button, HoverCard } from "@mantine/core";
 
 import { Conversation } from "types";
 
@@ -16,14 +16,21 @@ export function UIConversations(props: UISideBarProps) {
   const renderConversations = () => {
     const html: React.ReactNode[] = React.useMemo(() => {
       return conversations.map((conversation: any) => (
-        <Button 
-          key={conversation.id} 
-          onClick={() => onSelect(conversation)}
-          variant="subtle"
-          px={3} radius="md" justify="flex-start" color="dark.4"
-        >
-          <Text size="sm"> {conversation.name} </Text>
-        </Button>
+        <HoverCard shadow="md" openDelay={600} withArrow position="right">
+          <HoverCard.Target>
+            <Button 
+              key={conversation.id} 
+              onClick={() => onSelect(conversation)}
+              variant="subtle"
+              px={3} radius="md" justify="flex-start" color="dark.4"
+            >
+              <Text size="sm"> {conversation.name} </Text>
+            </Button>
+          </HoverCard.Target>
+          <HoverCard.Dropdown w={350}>
+            <Text> {conversation.name} </Text>
+          </HoverCard.Dropdown>
+        </HoverCard>
       ))
     }, [onSelect])
     
