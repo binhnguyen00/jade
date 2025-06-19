@@ -15,7 +15,7 @@ interface UIUserInputProps {
 
 export function UIUserInput(props: UIUserInputProps) {
   const { model, onSuccessResponse, onSubmit } = props;
-  const { chat } = useChat();
+  const { chat, loading } = useChat();
 
   const form = useForm({
     mode: "controlled",
@@ -55,7 +55,7 @@ export function UIUserInput(props: UIUserInputProps) {
               <Grid>
                 <Grid.Col span={11}> {children} </Grid.Col>
                 <Grid.Col span={1}> 
-                  <Button type="submit" color="dark">
+                  <Button type="submit" color="dark" loading={loading} loaderProps={{ type: "dots" }}>
                     <SendHorizonal />
                   </Button>
                 </Grid.Col>
