@@ -31,9 +31,9 @@ class UnitTest():
 
   def test_delete(self, db: MongoDB, id: str) -> Optional[int]:
     result = db.delete_by_id(collection_name="users", document_id=id)
-    if (result == 1):
-      self.logger.info(f"Deleted user: {id}")
-      return result
+    assert (result == 1)
+    self.logger.info(f"Deleted user: {id}")
+    return result
 
   def test_insert(self, db: MongoDB) -> str:
     user = db.insert_one("users", {
@@ -46,7 +46,7 @@ class UnitTest():
     return user.inserted_id
 
   def main(self):
-    jade = MongoDB()
+    jade = MongoDB(host="localhost", port=27017, database="jade")
     self.test_get_collection(db=jade)
     id = self.test_insert(db=jade)
     self.test_delete(db=jade, id=id)

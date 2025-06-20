@@ -13,7 +13,7 @@ class MongoDB():
   db: Database
   logger: logging.Logger
 
-  def __init__(self, host: str = "localhost", port: int = 27017, database: str = "jade") -> None:
+  def __init__(self, host: str = "localhost", port: int = 27017, database: str = "test") -> None:
     self.logger = logging.getLogger("MongoDB")
     self.client = MongoClient(f"mongodb://{host}:{port}/", serverSelectionTimeoutMS=5000)
     try:
