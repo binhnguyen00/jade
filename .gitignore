@@ -19,5 +19,10 @@ Thumbs.db
 **/package-lock.json
 **/yarn.lock
 **/.vscode
-**/runtime
 **/__pycache__
+
+**/runtime/*/.venv
+**/runtime/*/data
+**/runtime/*/logs
+**/runtime/*/env.sh
+**/runtime/*/gunicorn.pid
