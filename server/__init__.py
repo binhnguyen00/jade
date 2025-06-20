@@ -1,2 +1,2 @@
-from .test import UnitTest;
-from .mongodb import MongoDB;
+from . import test;
+from . import mongodb;

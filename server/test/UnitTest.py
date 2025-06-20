@@ -2,14 +2,14 @@ import os;
 import sys;
 import logging
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from typing import Optional;
-from server.mongodb.MongoDB import MongoDB;
+from mongodb.MongoDB import MongoDB;
 
 logging.basicConfig(
   level=logging.INFO,
-  format='%(asctime)s - [ %(name)s\t ] - [ %(levelname)s ]: %(message)s',
+  format='%(asctime)s - [ %(name)s\t ] - [ %(levelname)s ]\t: %(message)s',
   handlers=[logging.StreamHandler()]
 )
 

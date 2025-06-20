@@ -13,10 +13,16 @@ class MongoDB():
   db: Database
   logger: logging.Logger
 
-  def __init__(self, host: str = "localhost", port: int = 27017, database: str = "test") -> None:
+  def __init__(self, host: str = "localhost", port: int = 27017, database: str = "test", timeout: int = 5000) -> None:
+    """ Initialize MongoDB connection 
+      :param host: Hostname or IP address (default: "localhost")
+      :param port: Port number (default: 27017)
+      :param database: Database name (default: "test")
+      :param timeout: Server selection timeout in milliseconds (default: 5000)
+    """
     self.logger = logging.getLogger("MongoDB")
-    self.client = MongoClient(f"mongodb://{host}:{port}/", serverSelectionTimeoutMS=5000)
     try:
+      self.client = MongoClient(f"mongodb://{host}:{port}/", serverSelectionTimeoutMS=timeout)
       self.client.server_info()
       self.db = self.client.get_database(database)
       self.logger.info("Connected to MongoDB successfully")
