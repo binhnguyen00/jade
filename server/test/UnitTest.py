@@ -9,13 +9,13 @@ client = pymongo.MongoClient("mongodb://localhost:27017/")
 db: Database = client.get_database("jade")
 
 users: Collection = db.get_collection("users")
-user = users.find_one({"username": "jackjack"})
+user = users.find_one({"username": "abc"})
 if (user):
   print(user)
 else:
   new_user: InsertOneResult = users.insert_one({
-    "username" : "jackjack",
+    "username" : "abc",
     "password" : "123456",
     "email"    : "jackjack2000.kahp@gmail.com"
   })
-  print(new_user)
+  print(new_user.inserted_id)
