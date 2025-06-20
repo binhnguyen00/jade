@@ -16,10 +16,9 @@ export function UIConversations(props: UISideBarProps) {
   const renderConversations = () => {
     const html: React.ReactNode[] = React.useMemo(() => {
       return conversations.map((conversation: any) => (
-        <HoverCard shadow="md" openDelay={600} withArrow position="right">
+        <HoverCard key={conversation.id} shadow="md" openDelay={600} withArrow position="right">
           <HoverCard.Target>
             <Button 
-              key={conversation.id} 
               onClick={() => onSelect(conversation)}
               variant="subtle"
               px={3} radius="md" justify="flex-start" color="dark.4"

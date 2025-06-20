@@ -114,7 +114,15 @@ if [ "$COMMAND" = "build" ] ; then
 elif [ "$COMMAND" = "install" ] ; then
   install $@
 elif [ "$COMMAND" = "run" ] ; then
-  run $@
+  if hasOpt "-dev" $@; then
+    run $@
+  elif hasOpt "-server" $@; then
+    run $@
+  else
+    echo -e "${ORANGE}No option provided. Showing help...${NO_COLOR}"
+    showHelp
+    exit 1
+  fi
 else
   showHelp
 fi

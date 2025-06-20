@@ -2,7 +2,7 @@ import React from "react";
 
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { AppShell, Title, Group, Burger, Text, Container, Select, Stack } from "@mantine/core";
+import { AppShell, Title, Group, Burger, Text, Container, Select, Stack, CloseButton } from "@mantine/core";
 
 import { ChatModel } from "types";
 
@@ -52,7 +52,10 @@ export function UIHome() {
 
       <AppShell.Navbar p="md">
         <Stack gap="sm">
-          <Text> Conversations </Text>
+          <Group justify="space-between">
+            <Text> Conversations </Text>
+            <CloseButton hiddenFrom="sm" onClick={closeMobile}/>
+          </Group>
           <UIConversations onSelect={(conversation) => console.log(conversation)}/>
         </Stack>
       </AppShell.Navbar>
