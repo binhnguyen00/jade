@@ -119,23 +119,23 @@ function status() {
 function show_helps() {
   echo """
 Usage: Run server with prepaired configs
-  ./server.sh [COMMAND] [OPTION]
+  ./flask.sh [COMMAND] [OPTION]
 
 Python Virtual Environment
-  ./server.sh venv --create
-  ./server.sh venv --install
+  ./flask.sh venv --create
+  ./flask.sh venv --install
 
 Server
-  ./server.sh run
+  ./flask.sh run
     - Start gunicorn service as daemon
 
-  ./server.sh stop
+  ./flask.sh stop
     - Kill gunicorn service by PID
 
-  ./server.sh status
+  ./flask.sh status
     - Check the server if it is running or not
 
-  ./server.sh debug
+  ./flask.sh debug
     - Start gunicorn service with tail logs
   """
 }
