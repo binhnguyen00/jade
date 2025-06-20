@@ -1,1 +1,4 @@
 pymongo
+flask
+flask-cors
+gunicorn
