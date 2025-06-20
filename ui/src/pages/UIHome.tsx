@@ -5,12 +5,19 @@ import { useDisclosure } from "@mantine/hooks";
 import { AppShell, Title, Group, Burger, Text, Container, Select, Stack, CloseButton } from "@mantine/core";
 
 import { ChatModel } from "types";
+import { useOpenRouter } from "hooks";
 
 import { UIChatBox } from "./UIChatBox";
 import { UIUserInput } from "./UIUserInput";
 import { UIConversations } from "./UIConversations";
 
 export function UIHome() {
+  const { data } = useOpenRouter();
+
+  React.useEffect(() => {
+    console.log(data);
+  }, [ data ])
+
   const [ mobileOpened, { toggle: toggleMobile, close: closeMobile, open: openMobile } ] = useDisclosure();
   const [ desktopOpened, { toggle: toggleDesktop, close: closeDesktop, open: openDesktop } ] = useDisclosure(true);
 

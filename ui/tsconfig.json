@@ -16,6 +16,9 @@
     "module": "es2022",
     "outDir": "dist",
     "moduleResolution": "bundler",
+    "types": [
+      "vite/client"
+    ]
   },
   "exclude": [
     "node_modules",
