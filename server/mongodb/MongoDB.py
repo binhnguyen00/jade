@@ -1,6 +1,6 @@
 import logging;
 
-from typing import Optional, Union
+from typing import Optional, Union;
 from pymongo.cursor import Cursor;
 from pymongo.database import Database;
 from pymongo.errors import DuplicateKeyError;

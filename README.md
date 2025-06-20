@@ -1,7 +1,7 @@
-<h1 style="text-align: center;"> Open GPT - Project Jade </h1>
+<h1 style="text-align: center;"> AIChat Client - Project Jade </h1>
 
 ## 1. What is this?
-- This is a client for OpenAI's API Client.
+- This is a client for many AI models (OpenAI, DeepSeek, Claude, Gemini, ...).
 - Completely free APIs, Unlimited - no catches ✌🏾.
 
 ## 2. Tech Stack
