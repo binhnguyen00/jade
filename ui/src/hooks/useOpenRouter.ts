@@ -1,18 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
-import { Method } from "types";
+import { Method, OpenRouterFreeModel } from "types";
 
 export function useOpenRouter() {
-  const { isPending, error, data } = useQuery({
-    queryKey: [ "openRouter" ],
-    queryFn: queryFn,
-    retry: 3,
+  const { mutate, isPending, error, data } = useMutation({
+    mutationKey: [ "openRouter" ],
+    mutationFn: mutationFn,
+    retry: false,
   })
 
-  return { isPending, error, data }
+  return { trigger: mutate, isPending, error, data }
 }
 
-async function queryFn(): Promise<any> {
+async function mutationFn({ prompt, model }: {
+  prompt: string,
+  model: OpenRouterFreeModel,
+}): Promise<any> {
   const openRouterApiKey = import.meta.env.VITE_OPEN_ROUTER_API_KEY as string;
   const input = "https://openrouter.ai/api/v1/chat/completions";
   const init: RequestInit = {
@@ -21,9 +24,9 @@ async function queryFn(): Promise<any> {
       "Authorization": `Bearer ${openRouterApiKey}`,
     },
     body: JSON.stringify({
-      model: "deepseek/deepseek-r1-0528:free",
+      model: model,
       messages: [
-        { role: "user", content: "Hello, how are you?" },
+        { role: "user", content: prompt },
       ],
     }),
   }
