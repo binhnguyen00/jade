@@ -27,6 +27,9 @@ class MongoDB():
   def get_collection(self, collection_name: str) -> Collection:
     return self.db[collection_name]
 
+  def drop_collection(self, collection_name: str) -> dict:
+    return self.db.drop_collection(collection_name)
+
   def close(self):
     self.client.close()
 
@@ -79,19 +82,22 @@ class MongoDB():
       self.logger.error(f"Get document error: {e}")
       raise
 
-  def insert(self, collection_name: str, documents: list[dict]) -> Optional[ObjectId | list[ObjectId]]:
+  def insert_one(self, collection_name: str, document: dict) -> Optional[InsertOneResult]:
     try:
       collection: Collection = self.get_collection(collection_name)
-      if (len(documents) == 1):
-        document = documents[0]
-        result: InsertOneResult = collection.insert_one(document)
-        return result.inserted_id
-      else:
-        results: InsertManyResult = collection.insert_many(documents)
-        return results.inserted_ids
-
+      result: InsertOneResult = collection.insert_one(document)
+      return result
     except (PyMongoError, DuplicateKeyError) as e:
-      self.logger.error(f"Insert error: {e}")
+      self.logger.error(f"Insert one error: {e}")
+      raise
+
+  def insert_many(self, collection_name: str, documents: list[dict]) -> Optional[InsertManyResult]:
+    try:
+      collection: Collection = self.get_collection(collection_name)
+      result: InsertManyResult = collection.insert_many(documents)
+      return result
+    except (PyMongoError, DuplicateKeyError) as e:
+      self.logger.error(f"Insert many error: {e}")
       raise
 
   def update(self, collection_name: str, filter_query: dict, datas: list[dict], upsert: bool = False) -> Optional[int]:

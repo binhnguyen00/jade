@@ -20,3 +20,4 @@ Thumbs.db
 **/yarn.lock
 **/.vscode
 **/runtime
+**/__pycache__
