@@ -8,7 +8,7 @@ export type ChatResponse = {
   },
 }
 
-export enum Method {
+export enum RequestMethod {
   GET = "GET",
   POST = "POST",
   PUT = "PUT",

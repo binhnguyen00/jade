@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { Method, OpenRouterFreeModel } from "types";
+import { RequestMethod, OpenRouterFreeModel } from "types";
+import { useViteKey } from "./useViteKey";
 
 export function useOpenRouter() {
   const { mutate, isPending, error, data } = useMutation({
@@ -16,10 +17,11 @@ async function mutationFn({ prompt, model }: {
   prompt: string,
   model: OpenRouterFreeModel,
 }): Promise<any> {
-  const openRouterApiKey = import.meta.env.VITE_OPEN_ROUTER_API_KEY as string;
+  const openRouterApiKey = useViteKey({ key: "VITE_OPEN_ROUTER_API_KEY" }) as string;
+  
   const input = "https://openrouter.ai/api/v1/chat/completions";
   const init: RequestInit = {
-    method: Method.POST,
+    method: RequestMethod.POST,
     headers: {
       "Authorization": `Bearer ${openRouterApiKey}`,
     },

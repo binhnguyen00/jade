@@ -3,6 +3,7 @@ import { useOpenGPT } from "./useOpenGPT";
 import { useDeepSeek } from "./useDeepSeek";
 import { useOpenRouter } from "./useOpenRouter";
 import { useChat } from "./useChat";
+import { useViteKey } from "./useViteKey";
 
 export { 
   useScriptTag,
@@ -10,4 +11,5 @@ export {
   useDeepSeek,
   useChat,
   useOpenRouter,
+  useViteKey,
 }
