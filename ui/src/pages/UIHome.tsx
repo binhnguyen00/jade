@@ -2,14 +2,14 @@ import React from "react";
 
 import { useForm } from "@mantine/form";
 import { useDisclosure } from "@mantine/hooks";
-import { AppShell, Title, Group, Burger, Text, Container, Select, Stack, CloseButton } from "@mantine/core";
+import { AppShell, Title, Group, Burger, Container, Select } from "@mantine/core";
 
 import { ChatModel } from "types";
 import { useOpenRouter } from "hooks";
 
 import { UIChatBox } from "./UIChatBox";
 import { UIUserInput } from "./UIUserInput";
-import { UIConversations } from "./UIConversations";
+import { UINavBar } from "./UINavBar";
 
 export function UIHome() {
   const { data } = useOpenRouter();
@@ -33,7 +33,7 @@ export function UIHome() {
       layout="alt"
       header={{ height: 60 }}
       footer={{ height: "auto" }}
-      navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !mobileOpened, desktop: !desktopOpened } }}
+      navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !mobileOpened, desktop: !desktopOpened } }}
       padding="md"
     >
 
@@ -58,13 +58,10 @@ export function UIHome() {
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        <Stack gap="sm">
-          <Group justify="space-between">
-            <Text> Conversations </Text>
-            <CloseButton hiddenFrom="sm" onClick={closeMobile}/>
-          </Group>
-          <UIConversations onSelect={(conversation) => console.log(conversation)}/>
-        </Stack>
+        <UINavBar
+          onSelect={(conversation: any) => console.log(conversation)} 
+          onClose={closeDesktop}
+        />
       </AppShell.Navbar>
 
       <AppShell.Main style={{ display: "flex", flexDirection: "column", overflow: "hidden" }}>
