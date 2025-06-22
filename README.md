@@ -1,4 +1,4 @@
-<h1 style="text-align: center;"> Project Jade </h1>
+<h1 align="center"> Project Jade </h1>
 
 ## 1. What is this?
 - This is a client for many AI models (OpenAI, DeepSeek, Claude, Gemini, ...).
