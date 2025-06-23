@@ -53,7 +53,7 @@ class Application():
 
   def _component_scan(self):
     conversation_service = ConversationService(database=self.database)
-    conversation_controller = ConversationController(app=self.app, service=conversation_service)
+    conversation_controller = ConversationController(app=self.app, conversation_service=conversation_service)
     conversation_controller.register_routes()
 
   def _print_banner(self):
