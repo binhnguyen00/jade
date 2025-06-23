@@ -1,6 +1,6 @@
 [
   {
-    "name": "Conversation 1",
+    "name": "Greetings",
     "messages": [
       {
         "role": "user",
@@ -13,28 +13,28 @@
     ]
   },
   {
-    "name": "Conversation 2",
+    "name": "What are you?",
     "messages": [
       {
         "role": "user",
-        "content": "Hello"
+        "content": "What are you?"
       },
       {
         "role": "assistant",
-        "content": "Greeting! How can i help you?"
+        "content": "I am a chatbot."
       }
     ]
   },
   {
-    "name": "Conversation 3",
+    "name": "What can you do?",
     "messages": [
       {
         "role": "user",
-        "content": "Hello"
+        "content": "What can you do?"
       },
       {
         "role": "assistant",
-        "content": "Greeting! How can i help you?"
+        "content": "I can answer your questions."
       }
     ]
   }
