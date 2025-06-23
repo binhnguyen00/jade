@@ -45,6 +45,7 @@ function install_venv() {
 }
 
 function run() {
+  activate_venv
   export PYTHONPATH="$WORKSPACE_DIR:$PYTHONPATH"
 
   # handle start twice
