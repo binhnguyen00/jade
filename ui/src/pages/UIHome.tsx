@@ -18,7 +18,7 @@ export function UIHome() {
     mode: "uncontrolled",
     initialValues: {
       model: OpenRouterFreeModel.DEEPSEEK_R1,
-      currentConversationId: 0,
+      currentConversationId: "6858d9f6599090d43e751be7",
       currentPrompt: "",
       currentResponse: "",
     }

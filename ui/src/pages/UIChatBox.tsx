@@ -7,7 +7,7 @@ import { Conversation } from "types";
 import { ConversationAPI } from "apis";
 
 interface UIChatBoxProps {
-  conversationId: number;
+  conversationId: string;
   currentPrompt?: string;
   currentResponse?: string;
 }
@@ -39,24 +39,26 @@ export function UIChatBox(props: UIChatBoxProps) {
     if (newMessages.length > 0) {
       setTempMessages(newMessages);
     }
-
-    console.log(newMessages);
   }, [ currentPrompt, currentResponse ])
 
   React.useEffect(() => {
     mutate();
   }, [ conversationId ])
 
-  const mutationFn = async (id: number) => {
+  const mutationFn = async (id: string) => {
     const conversation = await ConversationAPI.getById({ id });
     return conversation;
   }
 
-  const { mutate, isPending, isError, data } = useMutation<Conversation>({
+  const { mutate, isPending, isError, data: response } = useMutation<{
+    code: number;
+    message: string;
+    data: Conversation;
+  }>({
     retry: false,
     mutationKey: [ "conversation" ],
     mutationFn: () => mutationFn(conversationId),
-    onSuccess: (data: Conversation) => {
+    onSuccess: (data) => {
       console.log(data);
     },
     onError: (error: Error) => {
@@ -64,20 +66,28 @@ export function UIChatBox(props: UIChatBoxProps) {
     },
   })
 
-  // if (isError) {
-  //   return (
-  //     <Center>
-  //       <Button variant="transparent" leftSection={<CloudAlert/>} c="red" > 
-  //         <Text fz="h3"> {"Error"} </Text>
-  //       </Button>
-  //     </Center>
-  //   );
-  // }
+  if (isError) {
+    return (
+      <Center>
+        <Button variant="transparent" leftSection={<CloudAlert/>} c="red" > 
+          <Text fz="h3"> {"Error"} </Text>
+        </Button>
+      </Center>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <Box pos="relative" style={{ minHeight: "50vh" }}>
+        <LoadingOverlay visible={isPending} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
+      </Box>
+    );
+  }
 
   return (
-    <Box pos="relative" style={{ height: 500 }}>
+    <Box pos="relative">
       <Stack>
-        {data?.messages.map((message: any) => (
+        {response?.data?.messages?.map((message: any) => (
           <Paper key={message.id}>
             <Text> {message.content} </Text>
           </Paper>
@@ -88,7 +98,6 @@ export function UIChatBox(props: UIChatBoxProps) {
           </Paper>
         ))}
       </Stack>
-      <LoadingOverlay visible={isPending} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
     </Box>
   );
 }

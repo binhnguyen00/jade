@@ -4,7 +4,7 @@ import { API } from "./api";
 
 export class ConversationAPI extends API {
 
-  public static async getById({ id }: { id: number }) {
+  public static async getById({ id }: { id: string }) {
     const input: RequestInfo = `${this.baseURL}/${this.Module.CONVERSATION}/${id}`;
     const init: RequestInit = {
       method: RequestMethod.GET,
