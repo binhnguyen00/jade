@@ -8,11 +8,18 @@ from mongodb.MongoDB import MongoDB;
 from .Controller import Controller;
 from .Service import Service;
 from .Data import SampleData;
+from .Log import ColoredFormatter;
+
+formatter: ColoredFormatter = ColoredFormatter(
+  fmt='%(asctime)s - [ %(name)-12s ] - [ %(levelname)s ]: %(message)s',
+  datefmt='%d-%m-%Y@%H:%M:%S'
+)
+handler: logging.StreamHandler = logging.StreamHandler()
+handler.setFormatter(formatter)
 
 logging.basicConfig(
   level=logging.INFO,
-  format='%(asctime)s - [ %(name)-12s ] - [ %(levelname)-7s ]: %(message)s',
-  handlers=[logging.StreamHandler()]
+  handlers=[handler]
 )
 
 class Application():
