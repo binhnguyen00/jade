@@ -99,6 +99,7 @@ function stop() {
 }
 
 function debug() {
+  activate_venv
   export PYTHONPATH="$WORKSPACE_DIR:$PYTHONPATH"
   python -m application.Debug
 }

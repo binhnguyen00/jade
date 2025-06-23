@@ -11,7 +11,7 @@ from pymongo.results import DeleteResult, InsertManyResult, InsertOneResult, Upd
 class MongoDB():
   client: MongoClient
   db: Database
-  logger: logging.Logger
+  log: logging.Logger
 
   def __init__(self, host: str = "localhost", port: int = 27017, database: str = "test", timeout: int = 5000) -> None:
     """ Initialize MongoDB connection 
@@ -20,14 +20,14 @@ class MongoDB():
       :param database: Database name (default: "test")
       :param timeout: Server selection timeout in milliseconds (default: 5000)
     """
-    self.logger = logging.getLogger("MongoDB")
+    self.log = logging.getLogger("MongoDB")
     try:
       self.client = MongoClient(f"mongodb://{host}:{port}/", serverSelectionTimeoutMS=timeout)
       self.client.server_info()
       self.db = self.client.get_database(database)
-      self.logger.info("Connected to MongoDB successfully")
+      self.log.info("Connected to MongoDB successfully")
     except PyMongoError as e:
-      self.logger.error(f"Connection error: {e}")
+      self.log.error(f"Connection error: {e}")
       raise
 
   def get_collection(self, collection_name: str) -> Collection:
@@ -52,7 +52,7 @@ class MongoDB():
       cursor: Cursor = collection.find(filter=query, projection=projection, limit=limit)
       return list(cursor)
     except PyMongoError as e:
-      self.logger.error(f"Search error: {e}")
+      self.log.error(f"Search error: {e}")
       raise
 
   def find_one(self, collection_name: str, query: dict = {}, projection: dict = {}) -> dict | None:
@@ -66,7 +66,7 @@ class MongoDB():
       collection: Collection = self.get_collection(collection_name=collection_name)
       return collection.find_one(filter=query, projection=projection)
     except PyMongoError as e:
-      self.logger.error(f"Find one error: {e}")
+      self.log.error(f"Find one error: {e}")
       raise
 
   def get_by_id(self, collection_name: str, document_id: Union[str, ObjectId], projection: dict = {}):
@@ -85,7 +85,7 @@ class MongoDB():
       document = collection.find_one(filter={"_id": _id}, projection=projection)
       return document
     except (PyMongoError, ValueError) as e:
-      self.logger.error(f"Get document error: {e}")
+      self.log.error(f"Get document error: {e}")
       raise
 
   def insert_one(self, collection_name: str, document: dict) -> Optional[InsertOneResult]:
@@ -94,7 +94,7 @@ class MongoDB():
       result: InsertOneResult = collection.insert_one(document)
       return result
     except (PyMongoError, DuplicateKeyError) as e:
-      self.logger.error(f"Insert one error: {e}")
+      self.log.error(f"Insert one error: {e}")
       raise
 
   def insert_many(self, collection_name: str, documents: list[dict]) -> Optional[InsertManyResult]:
@@ -103,7 +103,7 @@ class MongoDB():
       result: InsertManyResult = collection.insert_many(documents)
       return result
     except (PyMongoError, DuplicateKeyError) as e:
-      self.logger.error(f"Insert many error: {e}")
+      self.log.error(f"Insert many error: {e}")
       raise
 
   def update(self, collection_name: str, filter_query: dict, datas: list[dict], upsert: bool = False) -> Optional[int]:
@@ -125,7 +125,7 @@ class MongoDB():
         return result.modified_count
 
     except PyMongoError as e:
-      self.logger.error(f"Update error: {e}")
+      self.log.error(f"Update error: {e}")
       raise
 
   def update_by_id(self, collection_name: str, document_id: Union[str, ObjectId], update_data: dict) -> Optional[int]:
@@ -145,7 +145,7 @@ class MongoDB():
       return result.modified_count
 
     except PyMongoError as e:
-      self.logger.error(f"Update by ID error: {e}")
+      self.log.error(f"Update by ID error: {e}")
       raise
 
   def delete(self, collection_name: str, filter_query: dict, multi: bool = False) -> Optional[int]:
@@ -163,7 +163,7 @@ class MongoDB():
       return result.deleted_count
 
     except PyMongoError as e:
-      self.logger.error(f"Delete error: {e}")
+      self.log.error(f"Delete error: {e}")
       raise
 
   def delete_by_id(self, collection_name: str, document_id: Union[str, ObjectId]) -> Optional[int]:
@@ -180,5 +180,5 @@ class MongoDB():
       return result.deleted_count
 
     except PyMongoError as e:
-      self.logger.error(f"Delete by ID error: {e}")
+      self.log.error(f"Delete by ID error: {e}")
       raise

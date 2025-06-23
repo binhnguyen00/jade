@@ -1,7 +1,15 @@
+import logging;
+
 from flask import Flask;
 from flask_cors import CORS;
 
 from .Controller import Controller;
+
+logging.basicConfig(
+  level=logging.INFO,
+  format='%(asctime)s - [ %(name)-12s ] - [ %(levelname)-7s ]: %(message)s',
+  handlers=[logging.StreamHandler()]
+)
 
 class Application():
   app: Flask
@@ -19,22 +27,19 @@ class Application():
     self.app.run(debug=debug, host=host, port=port)
 
   def _component_scan(self):
-    controller = Controller()
-    controller.register(self.app)
+    controller = Controller(app=self.app)
+    controller.register_routes()
 
   def _print_banner(self):
     banner = r"""
- /$$$$$$$                                               /$$              /$$$$$                 /$$          
-| $$__  $$                                             | $$             |__  $$                | $$          
-| $$  \ $$ /$$$$$$   /$$$$$$  /$$  /$$$$$$   /$$$$$$$ /$$$$$$              | $$  /$$$$$$   /$$$$$$$  /$$$$$$ 
-| $$$$$$$//$$__  $$ /$$__  $$|__/ /$$__  $$ /$$_____/|_  $$_/              | $$ |____  $$ /$$__  $$ /$$__  $$
-| $$____/| $$  \__/| $$  \ $$ /$$| $$$$$$$$| $$        | $$           /$$  | $$  /$$$$$$$| $$  | $$| $$$$$$$$
-| $$     | $$      | $$  | $$| $$| $$_____/| $$        | $$ /$$      | $$  | $$ /$$__  $$| $$  | $$| $$_____/
-| $$     | $$      |  $$$$$$/| $$|  $$$$$$$|  $$$$$$$  |  $$$$/      |  $$$$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$
-|__/     |__/       \______/ | $$ \_______/ \_______/   \___/         \______/  \_______/ \_______/ \_______/
-                        /$$  | $$                                                                            
-                       |  $$$$$$/                                                                            
-                        \______/                                                                             
+    /$$$$$$                 /$$          
+    |__  $$                | $$          
+       | $$  /$$$$$$   /$$$$$$$  /$$$$$$ 
+       | $$ |____  $$ /$$__  $$ /$$__  $$
+  /$$  | $$  /$$$$$$$| $$  | $$| $$$$$$$$
+ | $$  | $$ /$$__  $$| $$  | $$| $$_____/
+ |  $$$$$$/|  $$$$$$$|  $$$$$$$|  $$$$$$$
+  \______/  \_______/ \_______/ \_______/
     """
     print("\033[1;36m" + banner + "\033[0m")
     print("\033[1;32mApplication is starting...\033[0m")

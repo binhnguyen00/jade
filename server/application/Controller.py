@@ -1,6 +1,11 @@
+import logging;
+
 from typing import Any;
+from http import HTTPStatus;
 from flask import Flask;
 from flask import request, jsonify;
+
+from .Service import Service;
 
 class Response():
   def __init__(self, code: int, message: str, data: Any):
@@ -8,20 +13,40 @@ class Response():
     self.message  = message
     self.data     = data
 
+  @classmethod
+  def success(cls, data: Any, message: str = "success"):
+    return cls(code=HTTPStatus.OK.value, message=message, data=data)
+
+  @classmethod
+  def error(cls, code: int, message: str):
+    return cls(code=code, message=message, data=None)
+
   def to_dict(self):
     return {
-      "code": self.code,
-      "message": self.message,
-      "data": self.data
+      "code"    : self.code,
+      "data"    : self.data,
+      "message" : self.message,
     }
 
 class Controller():
-  
-  def __init__(self):
-    pass
+  app: Flask
+  log: logging.Logger
+  service: Service
 
-  def register(self, app: Flask):
-    @app.route("/mock", methods=["GET"])
+  def __init__(self, app: Flask) -> None:
+    self.app = app
+    self.log = logging.getLogger("Controller")
+    self.service = Service()
+
+  def register_routes(self):
+    @self.app.route("/mock", methods=["GET"])
     def mock():
-      response = Response(code=200, message="ok", data="MongoDB is easy ☘️")
+      response = Response.success(data="MongoDB is easy ☘️")
+      self.log.info(response.to_dict())
       return jsonify(response.to_dict())
+
+    @self.app.route("/conversation/<int:id>", methods=["GET"])
+    def get_conversation(id: int):
+      self.log
+      result = self.service.get_conversation(id=id)
+      return jsonify()

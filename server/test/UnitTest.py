@@ -9,30 +9,30 @@ from mongodb.MongoDB import MongoDB;
 
 logging.basicConfig(
   level=logging.INFO,
-  format='%(asctime)s - [ %(name)s\t ] - [ %(levelname)s ]\t: %(message)s',
+  format='%(asctime)s - [ %(name)s\t ] - [ %(levelname)s\t ]: %(message)s',
   handlers=[logging.StreamHandler()]
 )
 
 class UnitTest():
-  logger: logging.Logger
+  log: logging.Logger
   
   def __init__(self) -> None:
-    self.logger = logging.getLogger("UnitTest")
-    self.logger.info("Starting Unit Test")
+    self.log = logging.getLogger("UnitTest")
+    self.log.info("Starting Unit Test")
 
   def test_get_collection(self, db: MongoDB):
     collection = db.get_collection("users")
     assert (collection is not None)
-    self.logger.info("Collection users exists")
+    self.log.info("Collection users exists")
 
   def test_drop_collection(self, db: MongoDB):
     db.drop_collection("users")
-    self.logger.info("Collection users dropped")
+    self.log.info("Collection users dropped")
 
   def test_delete(self, db: MongoDB, id: str) -> Optional[int]:
     result = db.delete_by_id(collection_name="users", document_id=id)
     assert (result == 1)
-    self.logger.info(f"Deleted user: {id}")
+    self.log.info(f"Deleted user: {id}")
     return result
 
   def test_insert(self, db: MongoDB) -> str:
@@ -42,7 +42,7 @@ class UnitTest():
       "email"    : "jackjack2000.kahp@gmail.com"
     })
     assert (user is not None)
-    self.logger.info(f"User inserted: {user.inserted_id}")
+    self.log.info(f"User inserted: {user.inserted_id}")
     return user.inserted_id
 
   def main(self):
