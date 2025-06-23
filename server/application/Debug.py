@@ -1,4 +1,4 @@
-from .Application import application;
+from .Application import develop;
 
 if (__name__ == "__main__"):
-  application.run(debug=True, host='0.0.0.0', port=5001)
+  develop.debug(host='0.0.0.0', port=5001)
