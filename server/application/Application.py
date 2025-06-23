@@ -5,10 +5,10 @@ from flask import Flask;
 from flask_cors import CORS;
 from mongodb.MongoDB import MongoDB;
 
-from .Controller import Controller;
-from .Service import Service;
 from .Data import SampleData;
 from .Log import ColoredFormatter;
+from .controllers.ConversationController import ConversationController;
+from .services.ConversationService import ConversationService;
 
 formatter: ColoredFormatter = ColoredFormatter(
   fmt='%(asctime)s - [ %(name)-12s ] - [ %(levelname)s ]: %(message)s',
@@ -52,9 +52,9 @@ class Application():
     self.app.run(debug=True, host=host, port=port)
 
   def _component_scan(self):
-    service = Service(database=self.database)
-    controller = Controller(app=self.app, service=service)
-    controller.register_routes()
+    conversation_service = ConversationService(database=self.database)
+    conversation_controller = ConversationController(app=self.app, service=conversation_service)
+    conversation_controller.register_routes()
 
   def _print_banner(self):
     banner = r"""

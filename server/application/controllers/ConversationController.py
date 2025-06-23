@@ -1,39 +1,19 @@
 import logging;
 
-from typing import Any;
-from http import HTTPStatus;
 from flask import Flask;
 from flask import jsonify;
+from http import HTTPStatus;
 
-from .Service import Service, ServiceStatus;
+from .dto import Response;
+from ..services.dto import ServiceStatus;
+from ..services.ConversationService import ConversationService;
 
-class Response():
-  def __init__(self, code: int, message: str, data: Any):
-    self.code     = code
-    self.message  = message
-    self.data     = data
-
-  @classmethod
-  def success(cls, data: Any, message: str = "success"):
-    return cls(code=HTTPStatus.OK.value, message=message, data=data)
-
-  @classmethod
-  def error(cls, code: int, message: str):
-    return cls(code=code, message=message, data=None)
-
-  def to_dict(self):
-    return {
-      "code"    : self.code,
-      "data"    : self.data,
-      "message" : self.message,
-    }
-
-class Controller():
+class ConversationController():
   app: Flask
   log: logging.Logger
-  service: Service
+  service: ConversationService
 
-  def __init__(self, app: Flask, service: Service) -> None:
+  def __init__(self, app: Flask, service: ConversationService) -> None:
     self.app = app
     self.log = logging.getLogger("Controller")
     self.service = service
