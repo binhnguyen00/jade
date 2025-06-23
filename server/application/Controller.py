@@ -5,7 +5,7 @@ from http import HTTPStatus;
 from flask import Flask;
 from flask import request, jsonify;
 
-from .Service import Service;
+from .Service import Service, ServiceStatus;
 
 class Response():
   def __init__(self, code: int, message: str, data: Any):
@@ -45,8 +45,12 @@ class Controller():
       self.log.info(response.to_dict())
       return jsonify(response.to_dict())
 
-    @self.app.route("/conversation/<int:id>", methods=["GET"])
-    def get_conversation(id: int):
-      self.log
+    @self.app.route("/conversation/<string:id>", methods=["GET"])
+    def get_conversation(id: str):
       result = self.service.get_conversation(id=id)
-      return jsonify()
+      if (result.status == ServiceStatus.ERROR):
+        response = Response.error(code=HTTPStatus.NOT_FOUND.value, message=result.message)
+        return jsonify(response.to_dict())
+
+      response = Response.success(data=result.data)
+      return jsonify(response.to_dict())
