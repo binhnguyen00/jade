@@ -4,11 +4,25 @@ source ./env.sh
 source "$WORKSPACE_DIR/runtime/utils.sh"
 
 function run() {
-  mongod --dbpath $DATA_DIR
+  if has_opt "--dev" "$@"; then
+    if [ ! -d "$DEV_DATA_DIR" ]; then
+      mkdir -p "$DEV_DATA_DIR"
+    fi
+    mongod --dbpath $DEV_DATA_DIR
+  elif has_opt "--prod" "$@"; then
+    if [ ! -d "$PROD_DATA_DIR" ]; then
+      mkdir -p "$PROD_DATA_DIR"
+    fi
+    mongod --dbpath $PROD_DATA_DIR
+  fi
 }
 
 function stop() {
-  kill $(pgrep -f "mongod --dbpath $DATA_DIR")
+  if has_opt "--dev" "$@"; then
+    kill $(pgrep -f "mongod --dbpath $DEV_DATA_DIR")
+  elif has_opt "--prod" "$@"; then
+    kill $(pgrep -f "mongod --dbpath $PROD_DATA_DIR")
+  fi
 }
 
 function show_helps() {
@@ -17,7 +31,12 @@ Usage: MongoDB CLI
   ./mongodb.sh [COMMAND] [OPTION]
 
 Start MongoDB Service
-  ./mongodb.sh run
+  ./mongodb.sh run --dev
+  ./mongodb.sh run --prod
+
+Stop MongoDB Service
+  ./mongodb.sh stop --dev
+  ./mongodb.sh stop --prod
   """
 }
 
@@ -31,7 +50,7 @@ else
 fi
 
 if [ "$COMMAND" = "run" ] ; then
-  run
+  run "$@"
 elif [ "$COMMAND" = "stop" ] ; then
-  stop
+  stop "$@"
 fi
