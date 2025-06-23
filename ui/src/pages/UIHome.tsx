@@ -74,7 +74,10 @@ export function UIHome() {
         <Container w={"60%"}>
           <UIUserInput 
             model={controller.getValues().model}
-            onSubmit={(prompt: string) => controller.setFieldValue("currentPrompt", prompt)}
+            onSubmit={(prompt: string) => {
+              console.log(prompt);
+              controller.setFieldValue("currentPrompt", prompt);
+            }}
             onSuccessResponse={(content: string) => controller.setFieldValue("currentResponse", content)}
           />
         </Container>
