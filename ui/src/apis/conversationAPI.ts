@@ -8,9 +8,7 @@ export class ConversationAPI extends API {
     const input: RequestInfo = `${this.baseURL}/${this.Module.CONVERSATION}/${id}`;
     const init: RequestInit = {
       method: RequestMethod.GET,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: this.initHeader(),
     }
     const response = await fetch(input, init);
     if (!response.ok) {
