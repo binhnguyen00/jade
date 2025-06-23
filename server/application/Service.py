@@ -45,3 +45,12 @@ class Service():
 
     normalized: dict = self.database.normalize(conversation)
     return ServiceResult.success(data=normalized)
+
+  def search_conversations(self, query: dict = {}) -> ServiceResult:
+    collection_name = "conversations"
+    conversations: list[dict] = self.database.search(collection_name, query=query)
+    if (not conversations):
+      return ServiceResult.error(message="Conversations not found")
+
+    normalized: list[dict] = self.database.bulk_normalize(conversations)
+    return ServiceResult.success(data=normalized)

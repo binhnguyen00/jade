@@ -183,6 +183,9 @@ class MongoDB():
       self.log.error(f"Delete by ID error: {e}")
       raise
 
+  def bulk_normalize(self, docs: list[dict]) -> list[dict]:
+    return [self.normalize(doc) for doc in docs]
+
   def normalize(self, doc: dict) -> dict:
     """Convert _id to id and ObjectId to str."""
     return {

@@ -54,3 +54,13 @@ class Controller():
 
       response = Response.success(data=result.data)
       return jsonify(response.to_dict())
+
+    @self.app.route("/conversation/search", methods=["POST"])
+    def search_conversations():
+      result = self.service.search_conversations()
+      if (result.status.equals(ServiceStatus.ERROR)):
+        response = Response.error(code=HTTPStatus.NOT_FOUND.value, message=result.message)
+        return jsonify(response.to_dict())
+
+      response = Response.success(data=result.data)
+      return jsonify(response.to_dict())
