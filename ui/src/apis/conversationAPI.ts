@@ -1,9 +1,11 @@
 import { RequestMethod } from "types"
 
-export class ConversationAPI {
+import { API } from "./api";
+
+export class ConversationAPI extends API {
 
   public static async getById({ id }: { id: number }) {
-    const input: RequestInfo = `http://localhost:5000/conversation/${id}`;
+    const input: RequestInfo = `${this.baseURL}/${this.Module.CONVERSATION}/${id}`;
     const init: RequestInit = {
       method: RequestMethod.GET,
       headers: {
