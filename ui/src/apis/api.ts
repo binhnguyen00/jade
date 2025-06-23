@@ -8,8 +8,8 @@ export class API {
 
   public static initHeader(): Record<string, string> {
     return {
-      "Content-Type": "application/json",
-    }
+      "Content-Type": "application/json; charset=UTF-8",
+    } as const;
   }
 
   public static async mock() {

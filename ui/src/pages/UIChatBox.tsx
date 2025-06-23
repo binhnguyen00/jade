@@ -45,9 +45,9 @@ export function UIChatBox(props: UIChatBoxProps) {
     mutate();
   }, [ conversationId ])
 
-  const mutationFn = async (id: string) => {
-    const conversation = await ConversationAPI.getById({ id });
-    return conversation;
+  const getConversation = async () => {
+    const response = await ConversationAPI.getById({ id: conversationId });
+    return response;
   }
 
   const { mutate, isPending, isError, data: response } = useMutation<{
@@ -57,7 +57,7 @@ export function UIChatBox(props: UIChatBoxProps) {
   }>({
     retry: false,
     mutationKey: [ "conversation" ],
-    mutationFn: () => mutationFn(conversationId),
+    mutationFn: getConversation,
     onSuccess: (data) => {
       console.log(data);
     },

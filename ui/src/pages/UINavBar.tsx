@@ -1,10 +1,12 @@
 import React from "react";
 import { SquarePen, Search } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { TextInput, Code, Stack, Text, Button, HoverCard, Group, CloseButton } from "@mantine/core";
 
 import { Conversation } from "types";
 
 import conversations from "data/conversations.json";
+import { ConversationAPI } from "apis";
 
 interface UIConversationsProps {
   onSelect: (conversation: Conversation) => void;
@@ -13,8 +15,25 @@ interface UIConversationsProps {
 export function UIConversations(props: UIConversationsProps) {
   const { onSelect } = props;
 
+  const searchConversations = async () => {
+    const response = await ConversationAPI.search({ params: { query: "" } });
+    return response;
+  }
+
+  const { data: response } = useQuery<{
+    code: number;
+    message: string;
+    data: Conversation[];
+  }>({
+    retry: false,
+    queryKey: [ "conversations" ],
+    queryFn: searchConversations,
+  })
+
   const renderConversations = () => {
-    const html: React.ReactNode[] = conversations.map((conversation: any) => (
+    if (!response) return null;
+
+    const html: React.ReactNode[] = response?.data?.map((conversation: any) => (
       <HoverCard key={conversation.id} shadow="md" openDelay={600} withArrow position="right">
         <HoverCard.Target>
           <Button 
