@@ -1,13 +1,16 @@
 import enum;
 import logging;
 
-from typing import Any, Optional;
+from typing import Any, Optional
 
 from mongodb.MongoDB import MongoDB;
 
 class ServiceStatus(enum.Enum):
   SUCCESS = "success"
   ERROR   = "error"
+
+  def equals(self, to: "ServiceStatus") -> bool:
+    return self.value == to.value
 
 class ServiceResult():
   status  : ServiceStatus
@@ -41,7 +44,10 @@ class Service():
     )
 
   def get_conversation(self, id: str) -> ServiceResult:
-    result: Optional[Any] = self.database.get_by_id(collection_name="conversations", document_id=id)
-    if (result is None):
+    collection_name = "conversations"
+    conversation: Optional[dict | None] = self.database.get_by_id(collection_name, document_id=id)
+    if (conversation is None):
       return ServiceResult.error(message="Conversation not found")
-    return ServiceResult.success(data=result)
+
+    normalized: dict = self.database.normalize(conversation)
+    return ServiceResult.success(data=normalized)

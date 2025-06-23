@@ -48,7 +48,7 @@ class Controller():
     @self.app.route("/conversation/<string:id>", methods=["GET"])
     def get_conversation(id: str):
       result = self.service.get_conversation(id=id)
-      if (result.status == ServiceStatus.ERROR):
+      if (result.status.equals(ServiceStatus.ERROR)):
         response = Response.error(code=HTTPStatus.NOT_FOUND.value, message=result.message)
         return jsonify(response.to_dict())
 

@@ -182,3 +182,10 @@ class MongoDB():
     except PyMongoError as e:
       self.log.error(f"Delete by ID error: {e}")
       raise
+
+  def normalize(self, doc: dict) -> dict:
+    """Convert _id to id and ObjectId to str."""
+    return {
+      'id': str(doc['_id']) if isinstance(doc.get('_id'), ObjectId) else doc.get('_id'),
+      **{k: v for k, v in doc.items() if k != '_id'}
+    }
