@@ -1,8 +1,7 @@
 import enum;
 import logging;
 
-from typing import Any, Optional
-
+from typing import Any, Optional;
 from mongodb.MongoDB import MongoDB;
 
 class ServiceStatus(enum.Enum):
@@ -34,14 +33,9 @@ class Service():
   log: logging.Logger
   database: MongoDB
 
-  def __init__(self) -> None:
+  def __init__(self, database: MongoDB) -> None:
     self.log = logging.getLogger("Service")
-    self.database = MongoDB(
-      host="localhost",
-      port=27017,
-      database="jade",
-      timeout=5000
-    )
+    self.database = database
 
   def get_conversation(self, id: str) -> ServiceResult:
     collection_name = "conversations"

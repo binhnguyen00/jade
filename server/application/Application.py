@@ -1,9 +1,11 @@
 import logging;
 
 from flask import Flask;
-from flask_cors import CORS;
+from flask_cors import CORS
+from mongodb.MongoDB import MongoDB;
 
 from .Controller import Controller;
+from .Service import Service;
 
 logging.basicConfig(
   level=logging.INFO,
@@ -13,10 +15,17 @@ logging.basicConfig(
 
 class Application():
   app: Flask
+  database: MongoDB
 
   def __init__(self):
     self.app = Flask(__name__)
     CORS(self.app)
+    self.database = MongoDB(
+      host="localhost",
+      port=27017,
+      database="jade",
+      timeout=10000
+    )
     self._component_scan()
 
   def get_app(self) -> Flask:
@@ -27,7 +36,8 @@ class Application():
     self.app.run(debug=debug, host=host, port=port)
 
   def _component_scan(self):
-    controller = Controller(app=self.app)
+    service = Service(database=self.database)
+    controller = Controller(app=self.app, service=service)
     controller.register_routes()
 
   def _print_banner(self):
