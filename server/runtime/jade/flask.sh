@@ -65,8 +65,7 @@ function run() {
     -b "$HOST:$PORT" \
     --timeout "$TIMEOUT" \
     --log-level "$LOG_LEVEL" \
-    --access-logfile "$LOG_DIR/access.log" \
-    --error-logfile "$LOG_DIR/error.log" \
+    --log-file "$LOG_DIR/app.log" \
     --pid "$PID_FILE" \
     -D \
     "$MODULE_NAME:$APP_VAR"
