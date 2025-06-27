@@ -32,7 +32,9 @@ Usage: MongoDB CLI
 
 Start MongoDB Service
   ./mongodb.sh run --dev
+    - Start MongoDB service in with development data
   ./mongodb.sh run --prod
+    - Start MongoDB service in with production data
 
 Stop MongoDB Service
   ./mongodb.sh stop --dev
