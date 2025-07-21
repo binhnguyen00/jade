@@ -25,6 +25,9 @@
     "@mantine/hooks": "^8.1.1",
     "@mantine/form": "^8.1.1",
     "@tanstack/react-query": "^5.80.10",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "rehype-raw": "^7.0.0",
     "lucide-react": "^0.516.0",
     "react": "^19.0.2",
     "react-dom": "^19.0.2"

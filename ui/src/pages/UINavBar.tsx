@@ -1,10 +1,10 @@
 import React from "react";
 import { SquarePen, Search } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { TextInput, Code, Stack, Text, Button, HoverCard, Group, CloseButton } from "@mantine/core";
 
 import { Conversation } from "types";
-
-import conversations from "data/conversations.json";
+import { ConversationAPI } from "apis";
 
 interface UIConversationsProps {
   onSelect: (conversation: Conversation) => void;
@@ -13,9 +13,27 @@ interface UIConversationsProps {
 export function UIConversations(props: UIConversationsProps) {
   const { onSelect } = props;
 
+  const searchConversations = async () => {
+    const response = await ConversationAPI.search({ params: { query: "" } });
+    return response;
+  }
+
+  const { data: response } = useQuery<{
+    code: number;
+    message: string;
+    data: Conversation[];
+  }>({
+    retry: false,
+    queryKey: [ "conversations" ],
+    refetchOnMount: true,
+    queryFn: searchConversations,
+  })
+
   const renderConversations = () => {
-    const html: React.ReactNode[] = conversations.map((conversation: any) => (
-      <HoverCard key={conversation.id} shadow="md" openDelay={600} withArrow position="right">
+    if (!response) return null;
+
+    const html: React.ReactNode[] = response?.data?.map((conversation: any) => (
+      <HoverCard key={conversation.id} shadow="md" openDelay={1200} withArrow position="right">
         <HoverCard.Target>
           <Button 
             onClick={() => onSelect(conversation)}
@@ -25,7 +43,7 @@ export function UIConversations(props: UIConversationsProps) {
             <Text size="sm"> {conversation.name} </Text>
           </Button>
         </HoverCard.Target>
-        <HoverCard.Dropdown w={350}>
+        <HoverCard.Dropdown w={"fit-content"}>
           <Text> {conversation.name} </Text>
         </HoverCard.Dropdown>
       </HoverCard>
@@ -39,10 +57,8 @@ export function UIConversations(props: UIConversationsProps) {
   }
 
   return (
-    <Stack gap="xs">
-      <div>
-        {renderConversations()}
-      </div>
+    <Stack>
+      {renderConversations()}
     </Stack>
   )
 }
@@ -58,7 +74,7 @@ export function UINavBar(props: UINavBarProps) {
   return (
     <Stack gap="sm">
       <Group justify="space-between">
-        <Text> Conversations </Text>
+        <Text> {"Conversations"} </Text>
         <CloseButton hiddenFrom="sm" onClick={onClose}/>
       </Group>
       <TextInput
@@ -71,9 +87,9 @@ export function UINavBar(props: UINavBarProps) {
       />
       <Button 
         variant="subtle" justify="flex-start" px={3}
-        leftSection={<SquarePen size={12}/>}
+        leftSection={<SquarePen/>}
       > 
-        New Chat 
+        <Text fw="bold"> {"New Chat"} </Text> 
       </Button>
       <UIConversations onSelect={onSelect}/>
     </Stack>

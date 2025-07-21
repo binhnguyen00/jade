@@ -18,7 +18,7 @@ export function UIHome() {
     mode: "uncontrolled",
     initialValues: {
       model: OpenRouterFreeModel.DEEPSEEK_R1,
-      currentConversationId: 0,
+      currentConversationId: "6858d9f6599090d43e751be7",
       currentPrompt: "",
       currentResponse: "",
     }
@@ -74,7 +74,10 @@ export function UIHome() {
         <Container w={"60%"}>
           <UIUserInput 
             model={controller.getValues().model}
-            onSubmit={(prompt: string) => controller.setFieldValue("currentPrompt", prompt)}
+            onSubmit={(prompt: string) => {
+              console.log(prompt);
+              controller.setFieldValue("currentPrompt", prompt);
+            }}
             onSuccessResponse={(content: string) => controller.setFieldValue("currentResponse", content)}
           />
         </Container>

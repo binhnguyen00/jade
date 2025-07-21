@@ -43,6 +43,7 @@ export function UIUserInput(props: UIUserInputProps) {
     const { model, prompt } = form.values;
     onSubmit(prompt);
     chat({ prompt, model });
+    form.reset();
   };
 
   return (

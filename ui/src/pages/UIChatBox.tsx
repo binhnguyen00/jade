@@ -1,13 +1,18 @@
 import React from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeRaw from "rehype-raw";
+
 import { CloudAlert } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { Paper, LoadingOverlay, Stack, Box, Text, Center, Button } from "@mantine/core";
+import { LoadingOverlay, Stack, Box, Text, Center, Button, Group, Avatar, ScrollArea } from "@mantine/core";
+
 
 import { Conversation } from "types";
 import { ConversationAPI } from "apis";
 
 interface UIChatBoxProps {
-  conversationId: number;
+  conversationId: string;
   currentPrompt?: string;
   currentResponse?: string;
 }
@@ -18,7 +23,7 @@ export function UIChatBox(props: UIChatBoxProps) {
   const [ tempMessages, setTempMessages ] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    const newMessages = [];
+    let newMessages: any[] = [];
 
     if (currentPrompt) {
       newMessages.push({
@@ -35,28 +40,34 @@ export function UIChatBox(props: UIChatBoxProps) {
         content: currentResponse
       });
     }
-
-    if (newMessages.length > 0) {
-      setTempMessages(newMessages);
-    }
-
-    console.log(newMessages);
+    
+    setTempMessages((prev) => {
+      const filtered = newMessages.filter((entry) =>
+        !prev.some((msg) => msg.content === entry.content && msg.role === entry.role)
+      );
+      return filtered.length > 0 ? [...prev, ...filtered] : prev;
+    });
   }, [ currentPrompt, currentResponse ])
 
   React.useEffect(() => {
     mutate();
+    setTempMessages([]);
   }, [ conversationId ])
 
-  const mutationFn = async (id: number) => {
-    const conversation = await ConversationAPI.getById({ id });
-    return conversation;
+  const getConversation = async () => {
+    const response = await ConversationAPI.getById({ id: conversationId });
+    return response;
   }
 
-  const { mutate, isPending, isError, data } = useMutation<Conversation>({
+  const { mutate, isPending, isError, data: response } = useMutation<{
+    code: number;
+    message: string;
+    data: Conversation;
+  }>({
     retry: false,
     mutationKey: [ "conversation" ],
-    mutationFn: () => mutationFn(conversationId),
-    onSuccess: (data: Conversation) => {
+    mutationFn: getConversation,
+    onSuccess: (data) => {
       console.log(data);
     },
     onError: (error: Error) => {
@@ -64,31 +75,60 @@ export function UIChatBox(props: UIChatBoxProps) {
     },
   })
 
-  // if (isError) {
-  //   return (
-  //     <Center>
-  //       <Button variant="transparent" leftSection={<CloudAlert/>} c="red" > 
-  //         <Text fz="h3"> {"Error"} </Text>
-  //       </Button>
-  //     </Center>
-  //   );
-  // }
+  const renderMessage = (message: any) => {
+    if (message.role === "user") {
+      return (
+        <Box key={message.id} flex={1}>
+          <Group justify="flex-end" p="xs"> 
+            <Text ff="monospace"> {message.content} </Text>
+          </Group>
+        </Box>
+      );
+    }
+
+    return (
+      <Group justify="flex-start" p="xs"> 
+        <Avatar color="yellow" name="J"/>
+        <Text ff="monospace">
+          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+            {message.content}
+          </ReactMarkdown>
+        </Text>
+      </Group>
+    );
+  }
+
+  if (isError) {
+    return (
+      <Center>
+        <Button variant="transparent" leftSection={<CloudAlert/>} c="red" > 
+          <Text fz="h3"> {"Error"} </Text>
+        </Button>
+      </Center>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <Box pos="relative" style={{ minHeight: "50vh" }}>
+        <LoadingOverlay visible={isPending} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
+      </Box>
+    );
+  }
 
   return (
-    <Box pos="relative" style={{ height: 500 }}>
-      <Stack>
-        {data?.messages.map((message: any) => (
-          <Paper key={message.id}>
-            <Text> {message.content} </Text>
-          </Paper>
-        ))}
-        {tempMessages?.map((message: any) => (
-          <Paper key={message.id}>
-            <Text> {message.content} </Text>
-          </Paper>
-        ))}
-      </Stack>
-      <LoadingOverlay visible={isPending} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
+    <Box pos="relative">
+      <ScrollArea>
+        <Stack gap={0}>
+          {response?.data?.messages?.map((message: any) => (
+            renderMessage(message)
+          ))}
+          {tempMessages?.map((message: any) => (
+            renderMessage(message)
+          ))}
+          <div style={{ height: 500 }}/>
+        </Stack>
+      </ScrollArea>
     </Box>
   );
 }
