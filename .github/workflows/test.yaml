@@ -14,9 +14,10 @@ jobs:
 
     steps:
       - name: Go to UI Folder
-        run: cd ./ui
+        run: cd ../../ui
 
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           node-version: 24
 
@@ -28,5 +29,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Server
+      - name: Build UI
         run: pnpm run build 
