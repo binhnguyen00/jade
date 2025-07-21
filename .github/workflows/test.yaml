@@ -14,9 +14,9 @@ jobs:
       - uses: actions/checkout@develop
         with:
           node-version: 24
+
       - name: Install dependencies
         run: pnpm install
+
       - name: Build Server
         run: pnpm run build 
-      - name: Run Server
-        run: pnpm run server
