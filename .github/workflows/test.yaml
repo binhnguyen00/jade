@@ -1,0 +1,22 @@
+name: Test UI
+
+on: 
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  test_ui:
+    runs-on: ubuntu-latest
+    container:
+      image: node:24
+    steps:
+      - uses: actions/checkout@develop
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build Server
+        run: pnpm run build 
+      - name: Run Server
+        run: pnpm run server
