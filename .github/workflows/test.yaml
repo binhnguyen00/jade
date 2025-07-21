@@ -8,9 +8,14 @@ on:
 jobs:
   test_ui:
     runs-on: ubuntu-latest
+
     container:
       image: node:24
+
     steps:
+      - name: Go to UI Folder
+        run: cd ./ui
+
       - uses: actions/checkout@v4
         with:
           node-version: 24
