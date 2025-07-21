@@ -1,0 +1,64 @@
+name: Test UI
+
+on: 
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-ui:
+    runs-on: ubuntu-latest
+
+    container:
+      image: node:24
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.12.1
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: ui
+
+      - name: Build UI
+        run: pnpm run build 
+        working-directory: ui
+
+  build-flask:
+    runs-on: ubuntu-latest
+
+    container:
+      image: python:3.12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        working-directory: server
+
+      - name: Create logs directory
+        run: mkdir -p logs
+        working-directory: server
+
+      - name: Run server
+        run: |
+          gunicorn \
+            -w 1 \
+            -b 0.0.0.0:5001 \
+            --timeout 120 \
+            --log-level info \
+            --log-file "logs/app.log" \
+            --pid "logs/gunicorn.pid" \
+            -D \
+            "application.Application:app" &
+          sleep 5  # wait for server to start
+        working-directory: server
