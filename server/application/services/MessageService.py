@@ -3,7 +3,8 @@ import logging;
 from datetime import datetime;
 from mongodb.MongoDB import MongoDB;
 
-from .dto import ServiceResult;
+from ..dto.Service import ServiceResult;
+from ..dto.MessageType import MessageType;
 
 class MessageService():
   log: logging.Logger
@@ -13,12 +14,12 @@ class MessageService():
     self.log = logging.getLogger("Service")
     self.database = database
 
-  def save_message(self, conversation_id: str, message: dict) -> ServiceResult:
+  def save_message(self, conversation_id: str, message: dict, role: MessageType) -> ServiceResult:
     collection_name = "conversations"
     update_operation = {
       "$push": {
         "messages": {
-          "$each": [ message ],
+          "$each": [{ "content": message, "role": role.value }],
         }
       },
       "$set": {

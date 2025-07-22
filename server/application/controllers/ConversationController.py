@@ -1,12 +1,14 @@
-import logging;
+import logging
 
 from flask import Flask;
 from flask import request;
 from flask import jsonify;
 from http import HTTPStatus;
+from typing import Literal;
 
-from .dto import Response;
-from ..services.dto import ServiceStatus;
+from ..dto.Controller import Response;
+from ..dto.MessageType import MessageType;
+from ..dto.Service import ServiceStatus;
 from ..services.MessageService import MessageService;
 from ..services.ConversationService import ConversationService;
 
@@ -65,7 +67,8 @@ class ConversationController():
         response = Response.error(code=HTTPStatus.BAD_REQUEST.value, message="Message is empty")
         return jsonify(response.to_dict())
 
-      result = self.message_service.save_message(conversation_id=id, message=message)
+      role: Literal["user", "assistant"] = request_body.get("role", "user")
+      result = self.message_service.save_message(conversation_id=id, message=message, role=MessageType(role))
       if (result.status.equals(ServiceStatus.ERROR)):
         response = Response.error(code=HTTPStatus.INTERNAL_SERVER_ERROR.value, message=result.message)
         return jsonify(response.to_dict())
