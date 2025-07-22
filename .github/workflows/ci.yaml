@@ -66,7 +66,7 @@ jobs:
             --log-level info \
             --log-file "logs/app.log" \
             --pid "logs/gunicorn.pid" \
-            "application.Application:app"
+            "application.Application:application"
           sleep 5
 
           curl -v http://localhost:5001/mock
