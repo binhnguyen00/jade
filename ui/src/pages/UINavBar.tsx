@@ -7,7 +7,7 @@ import { Conversation } from "types";
 import { ConversationAPI } from "apis";
 
 interface UIConversationsProps {
-  onSelect: (conversation: Conversation) => void;
+  onSelect: (id: string) => void;
 }
 
 export function UIConversations(props: UIConversationsProps) {
@@ -24,19 +24,20 @@ export function UIConversations(props: UIConversationsProps) {
     data: Conversation[];
   }>({
     retry: false,
-    queryKey: [ "conversations" ],
+    queryKey: ["conversations"],
     refetchOnMount: true,
     queryFn: searchConversations,
   })
 
   const renderConversations = () => {
     if (!response) return null;
+    if (!response.data) return null;
 
-    const html: React.ReactNode[] = response?.data?.map((conversation: any) => (
+    const html: React.ReactNode[] = response.data.map((conversation: any) => (
       <HoverCard key={conversation.id} shadow="md" openDelay={1200} withArrow position="right">
         <HoverCard.Target>
-          <Button 
-            onClick={() => onSelect(conversation)}
+          <Button
+            onClick={() => onSelect(conversation.id)}
             variant="subtle" px={3}
             radius="md" justify="flex-start" color="dark.4"
           >
@@ -64,7 +65,7 @@ export function UIConversations(props: UIConversationsProps) {
 }
 
 interface UINavBarProps {
-  onSelect: (conversation: Conversation) => void;
+  onSelect: (id: string) => void;
   onClose: () => void;
 }
 
@@ -75,23 +76,23 @@ export function UINavBar(props: UINavBarProps) {
     <Stack gap="sm">
       <Group justify="space-between">
         <Text> {"Conversations"} </Text>
-        <CloseButton hiddenFrom="sm" onClick={onClose}/>
+        <CloseButton hiddenFrom="sm" onClick={onClose} />
       </Group>
       <TextInput
         placeholder="Search"
         size="xs"
-        leftSection={<Search size={12}/>}
+        leftSection={<Search size={12} />}
         rightSectionWidth={70}
         rightSection={<Code>Ctrl + K</Code>}
         styles={{ section: { pointerEvents: 'none' } }}
       />
-      <Button 
+      <Button
         variant="subtle" justify="flex-start" px={3}
-        leftSection={<SquarePen/>}
-      > 
-        <Text fw="bold"> {"New Chat"} </Text> 
+        leftSection={<SquarePen />}
+      >
+        <Text fw="bold"> {"New Chat"} </Text>
       </Button>
-      <UIConversations onSelect={onSelect}/>
+      <UIConversations onSelect={onSelect} />
     </Stack>
   )
 }
