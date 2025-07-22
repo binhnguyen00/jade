@@ -14,3 +14,9 @@ export enum RequestMethod {
   PUT = "PUT",
   DELETE = "DELETE",
 }
+
+export type ServerResponse<T> = {
+  code: number;
+  message: string;
+  data: T;
+}

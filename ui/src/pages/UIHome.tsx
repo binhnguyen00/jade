@@ -30,7 +30,6 @@ export function UIHome() {
     <AppShell
       layout="alt"
       header={{ height: 60 }}
-      footer={{ height: "auto" }}
       navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !mobileOpened, desktop: !desktopOpened } }}
       padding="md"
     >

@@ -11,12 +11,12 @@ import { MessageType, OpenRouterFreeModel } from "types";
 interface UIUserInputProps {
   model: OpenRouterFreeModel;
   conversationId: string;
-  onSuccessResponse: (content: string) => void;
-  onSubmit: (prompt: string) => void;
+  onBotResponse: (content: string) => void;
+  onUserEnter: (prompt: string) => void;
 }
 
 export function UIUserInput(props: UIUserInputProps) {
-  const { model, conversationId, onSuccessResponse, onSubmit } = props;
+  const { model, conversationId, onBotResponse, onUserEnter } = props;
   const { chat, isPending, data } = useOpenRouter();
 
   const form = useForm({
@@ -35,13 +35,13 @@ export function UIUserInput(props: UIUserInputProps) {
       if (data) {
         const content = data.choices?.[0]?.message?.content;
         if (content) {
-          onSuccessResponse(content);
+          onBotResponse(content);
           onSaveMessage(content, MessageType.ASSISTANT);
           form.reset();
         }
       }
     }
-  }, [isPending, onSuccessResponse]);
+  }, [ isPending ]);
 
   const onSaveMessage = async (message: string, role: MessageType) => {
     const response = await ConversationAPI.saveMessage({
@@ -54,7 +54,7 @@ export function UIUserInput(props: UIUserInputProps) {
 
   const doChat = () => {
     const { model, prompt } = form.values;
-    onSubmit(prompt);
+    onUserEnter(prompt);
     onSaveMessage(prompt, MessageType.USER);
     chat({ prompt, model });
     form.reset();

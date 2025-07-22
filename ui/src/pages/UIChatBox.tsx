@@ -3,12 +3,16 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
+import { v4 as uuid } from "uuid";
 import { CloudAlert } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { LoadingOverlay, Stack, Box, Text, Center, Button, Group, Avatar, ScrollArea, AppShellFooter, Container } from "@mantine/core";
+import { 
+  LoadingOverlay, Stack, Box, Text, Center,
+  Button, Group, Avatar, ScrollArea, AppShellFooter,
+} from "@mantine/core";
 
 import { ConversationAPI } from "apis";
-import { Conversation, OpenRouterFreeModel } from "types";
+import { Conversation, Message, OpenRouterFreeModel, ServerResponse } from "types";
 
 import { UIUserInput } from "./UIUserInput";
 
@@ -20,57 +24,80 @@ interface UIChatBoxProps {
 export function UIChatBox(props: UIChatBoxProps) {
   const { model, conversationId } = props;
 
-  const [ tempMessages, setTempMessages ] = React.useState<any[]>([]);
+  const [ userMessage, setUserMessage ] = React.useState("");
+  const [ botMessage, setBotMessage ] = React.useState("");
 
-  React.useEffect(() => {
-    console.log("conversationId", conversationId);
-
-    mutate();
-    setTempMessages([]);
-  }, [conversationId])
-
-  const getConversation = async () => {
-    const response = await ConversationAPI.getById({ id: conversationId });
-    return response;
-  }
-
-  const { mutate, isPending, isError, data: response } = useMutation<{
-    code: number;
-    message: string;
-    data: Conversation;
-  }>({
+  const { mutate, isPending, isError, data } = useMutation<ServerResponse<Conversation>>({
     retry: false,
     mutationKey: ["conversation"],
-    mutationFn: getConversation,
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error: Error) => {
-      console.log(error);
+    mutationFn: async () => {
+      const response = await ConversationAPI.getById({ id: conversationId });
+      return response;
     },
   })
 
-  const renderMessage = (message: any) => {
-    if (message.role === "user") {
-      return (
-        <Box key={message.id} flex={1}>
+  React.useEffect(() => {
+    mutate();
+  }, [ conversationId ])
+
+  const renderMessages = (): React.ReactNode[] => {
+    if (!data) return [];
+    if (!data.data) return [];
+    if (!data.data.messages) return [];
+
+    const messages: React.ReactNode[] = [];
+
+    const lastUserMsg = [...data.data.messages].reverse().find(m => m.role === "user")?.content?.trim();
+    const lastBotMsg = [...data.data.messages].reverse().find(m => m.role === "assistant")?.content?.trim();
+
+    data.data.messages.map((message: Message) => {
+
+      if (message.role === "user") {
+        messages.push(
+          <Box key={uuid()} flex={1}>
+            <Group justify="flex-end" p="xs">
+              <Text ff="monospace"> {message.content} </Text>
+            </Group>
+          </Box>
+        );
+      } else {
+        messages.push(
+          <Group key={uuid()} justify="flex-start" p="xs">
+            <Avatar color="indigo" name="J" />
+            <Text ff="monospace">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                {message.content}
+              </ReactMarkdown>
+            </Text>
+          </Group>
+        );
+      }
+    });
+
+    if (userMessage.trim() && userMessage !== lastUserMsg) {
+      messages.push(
+        <Box key="__userMessage" flex={1}>
           <Group justify="flex-end" p="xs">
-            <Text ff="monospace"> {message.content} </Text>
+            <Text ff="monospace"> {userMessage} </Text>
           </Group>
         </Box>
       );
     }
-
-    return (
-      <Group justify="flex-start" p="xs">
-        <Avatar color="yellow" name="J" />
-        <Text ff="monospace">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-            {message.content}
-          </ReactMarkdown>
-        </Text>
-      </Group>
-    );
+  
+    if (botMessage.trim() && botMessage !== lastBotMsg) {
+      messages.push(
+        <Group key="__botMessage" justify="flex-start" p="xs">
+          <Avatar color="indigo" name="J" />
+          <Text ff="monospace">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              {botMessage}
+            </ReactMarkdown>
+          </Text>
+        </Group>
+      );
+    }
+    
+    return messages;
   }
 
   if (isError) {
@@ -95,12 +122,7 @@ export function UIChatBox(props: UIChatBoxProps) {
     <Box pos="relative">
       <ScrollArea>
         <Stack gap={0}>
-          {response?.data?.messages?.map((message: any) => (
-            renderMessage(message)
-          ))}
-          {tempMessages?.map((message: any) => (
-            renderMessage(message)
-          ))}
+          {renderMessages()}
           <div style={{ height: 500 }} />
         </Stack>
       </ScrollArea>
@@ -110,11 +132,11 @@ export function UIChatBox(props: UIChatBoxProps) {
           <div style={{ width: "60%" }}>
             <UIUserInput
               conversationId={conversationId} model={model}
-              onSuccessResponse={(content: string) => {
-                console.log(content);
+              onBotResponse={(content: string) => {
+                setBotMessage(content);
               }}
-              onSubmit={(prompt: string) => {
-                console.log(prompt);
+              onUserEnter={(prompt: string) => {
+                setUserMessage(prompt);
               }}
             />
           </div>
