@@ -5,16 +5,18 @@ import { useForm } from "@mantine/form";
 import { Button, Group, Textarea, Grid } from "@mantine/core";
 
 import { useOpenRouter } from "hooks";
-import { OpenRouterFreeModel } from "types";
+import { ConversationAPI } from "apis";
+import { MessageType, OpenRouterFreeModel } from "types";
 
 interface UIUserInputProps {
   model: OpenRouterFreeModel;
+  conversationId: string;
   onSuccessResponse: (content: string) => void;
   onSubmit: (prompt: string) => void;
 }
 
 export function UIUserInput(props: UIUserInputProps) {
-  const { model, onSuccessResponse, onSubmit } = props;
+  const { model, conversationId, onSuccessResponse, onSubmit } = props;
   const { chat, isPending, data } = useOpenRouter();
 
   const form = useForm({
@@ -34,14 +36,26 @@ export function UIUserInput(props: UIUserInputProps) {
         const content = data.choices?.[0]?.message?.content;
         if (content) {
           onSuccessResponse(content);
+          onSaveMessage(content, MessageType.ASSISTANT);
+          form.reset();
         }
       }
     }
-  }, [ isPending, data, onSuccessResponse ]);
+  }, [isPending, onSuccessResponse]);
+
+  const onSaveMessage = async (message: string, role: MessageType) => {
+    const response = await ConversationAPI.saveMessage({
+      id: conversationId,
+      message: message,
+      role: role,
+    });
+    console.log(response);
+  }
 
   const doChat = () => {
     const { model, prompt } = form.values;
     onSubmit(prompt);
+    onSaveMessage(prompt, MessageType.USER);
     chat({ prompt, model });
     form.reset();
   };
@@ -52,12 +66,12 @@ export function UIUserInput(props: UIUserInputProps) {
         <Textarea
           key={form.key("prompt")}
           placeholder="What's on your mind?"
-          maxRows={6} autosize w="100%" inputMode="text" 
+          maxRows={6} autosize w="100%" inputMode="text"
           inputContainer={
             (children: React.ReactNode) => (
               <Grid>
                 <Grid.Col span={11}> {children} </Grid.Col>
-                <Grid.Col span={1}> 
+                <Grid.Col span={1}>
                   <Button type="submit" color="dark" loading={isPending} loaderProps={{ type: "dots" }}>
                     <SendHorizonal />
                   </Button>

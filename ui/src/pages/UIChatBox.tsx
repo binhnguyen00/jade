@@ -5,54 +5,29 @@ import rehypeRaw from "rehype-raw";
 
 import { CloudAlert } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { LoadingOverlay, Stack, Box, Text, Center, Button, Group, Avatar, ScrollArea } from "@mantine/core";
+import { LoadingOverlay, Stack, Box, Text, Center, Button, Group, Avatar, ScrollArea, AppShellFooter, Container } from "@mantine/core";
 
-
-import { Conversation } from "types";
 import { ConversationAPI } from "apis";
+import { Conversation, OpenRouterFreeModel } from "types";
+
+import { UIUserInput } from "./UIUserInput";
 
 interface UIChatBoxProps {
+  model: OpenRouterFreeModel;
   conversationId: string;
-  currentPrompt?: string;
-  currentResponse?: string;
 }
 
 export function UIChatBox(props: UIChatBoxProps) {
-  const { conversationId, currentPrompt, currentResponse } = props;
+  const { model, conversationId } = props;
 
   const [ tempMessages, setTempMessages ] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    let newMessages: any[] = [];
+    console.log("conversationId", conversationId);
 
-    if (currentPrompt) {
-      newMessages.push({
-        id: `prompt-${Date.now()}`,
-        role: "user",
-        content: currentPrompt
-      });
-    }
-    
-    if (currentResponse) {
-      newMessages.push({
-        id: `response-${Date.now()}`,
-        role: "assistant",
-        content: currentResponse
-      });
-    }
-    
-    setTempMessages((prev) => {
-      const filtered = newMessages.filter((entry) =>
-        !prev.some((msg) => msg.content === entry.content && msg.role === entry.role)
-      );
-      return filtered.length > 0 ? [...prev, ...filtered] : prev;
-    });
-  }, [ currentPrompt, currentResponse ])
-
-  React.useEffect(() => {
     mutate();
     setTempMessages([]);
-  }, [ conversationId ])
+  }, [conversationId])
 
   const getConversation = async () => {
     const response = await ConversationAPI.getById({ id: conversationId });
@@ -65,7 +40,7 @@ export function UIChatBox(props: UIChatBoxProps) {
     data: Conversation;
   }>({
     retry: false,
-    mutationKey: [ "conversation" ],
+    mutationKey: ["conversation"],
     mutationFn: getConversation,
     onSuccess: (data) => {
       console.log(data);
@@ -79,7 +54,7 @@ export function UIChatBox(props: UIChatBoxProps) {
     if (message.role === "user") {
       return (
         <Box key={message.id} flex={1}>
-          <Group justify="flex-end" p="xs"> 
+          <Group justify="flex-end" p="xs">
             <Text ff="monospace"> {message.content} </Text>
           </Group>
         </Box>
@@ -87,8 +62,8 @@ export function UIChatBox(props: UIChatBoxProps) {
     }
 
     return (
-      <Group justify="flex-start" p="xs"> 
-        <Avatar color="yellow" name="J"/>
+      <Group justify="flex-start" p="xs">
+        <Avatar color="yellow" name="J" />
         <Text ff="monospace">
           <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
             {message.content}
@@ -101,7 +76,7 @@ export function UIChatBox(props: UIChatBoxProps) {
   if (isError) {
     return (
       <Center>
-        <Button variant="transparent" leftSection={<CloudAlert/>} c="red" > 
+        <Button variant="transparent" leftSection={<CloudAlert />} c="red" >
           <Text fz="h3"> {"Error"} </Text>
         </Button>
       </Center>
@@ -111,7 +86,7 @@ export function UIChatBox(props: UIChatBoxProps) {
   if (isPending) {
     return (
       <Box pos="relative" style={{ minHeight: "50vh" }}>
-        <LoadingOverlay visible={isPending} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }}/>
+        <LoadingOverlay visible={isPending} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
       </Box>
     );
   }
@@ -126,9 +101,25 @@ export function UIChatBox(props: UIChatBoxProps) {
           {tempMessages?.map((message: any) => (
             renderMessage(message)
           ))}
-          <div style={{ height: 500 }}/>
+          <div style={{ height: 500 }} />
         </Stack>
       </ScrollArea>
+      
+      <AppShellFooter p="lg">
+        <Center>
+          <div style={{ width: "60%" }}>
+            <UIUserInput
+              conversationId={conversationId} model={model}
+              onSuccessResponse={(content: string) => {
+                console.log(content);
+              }}
+              onSubmit={(prompt: string) => {
+                console.log(prompt);
+              }}
+            />
+          </div>
+        </Center>
+      </AppShellFooter>
     </Box>
   );
 }
