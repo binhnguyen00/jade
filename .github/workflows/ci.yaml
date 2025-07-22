@@ -32,12 +32,20 @@ jobs:
   build-flask:
     runs-on: ubuntu-latest
 
-    container:
-      image: python:3.12
+    services:
+      mongodb:
+        image: mongo:8.0
+        ports:
+          - 27017:27017
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
 
       - name: Install dependencies
         run: |
@@ -49,7 +57,7 @@ jobs:
         run: mkdir -p logs
         working-directory: server
 
-      - name: Run server
+      - name: Start server and run tests
         run: |
           gunicorn \
             -w 1 \
@@ -59,6 +67,10 @@ jobs:
             --log-file "logs/app.log" \
             --pid "logs/gunicorn.pid" \
             -D \
-            "application.Application:app" &
-          sleep 5  # wait for server to start
+            "application.Application:application"
+          sleep 5
+
+          curl -v http://localhost:5001/mock
+
+          python test/UnitTest.py
         working-directory: server
