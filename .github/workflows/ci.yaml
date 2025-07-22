@@ -49,7 +49,7 @@ jobs:
         run: mkdir -p logs
         working-directory: server
 
-      - name: Run server
+      - name: Start server and run tests
         run: |
           gunicorn \
             -w 1 \
@@ -59,6 +59,11 @@ jobs:
             --log-file "logs/app.log" \
             --pid "logs/gunicorn.pid" \
             -D \
-            "application.Application:app" &
-          sleep 5  # wait for server to start
+            "application.Application:app"
+
+          timeout 30 bash -c 'until curl -s http://localhost:5001/mock; do sleep 1; done'
+
+          python test/UnitTest.py
+
+          [ -f logs/gunicorn.pid ] && kill $(cat logs/gunicorn.pid)
         working-directory: server
