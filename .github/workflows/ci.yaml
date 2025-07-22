@@ -65,12 +65,9 @@ jobs:
             --log-level info \
             --log-file "logs/app.log" \
             --pid "logs/gunicorn.pid" \
-            -D \
             "application.Application:app"
 
-          timeout 15 bash -c 'while ! nc -z localhost 5001; do sleep 1; done'
+          curl -v http://localhost:5001/mock
 
           python test/UnitTest.py
-
-          [ -f logs/gunicorn.pid ] && kill $(cat logs/gunicorn.pid)
         working-directory: server
