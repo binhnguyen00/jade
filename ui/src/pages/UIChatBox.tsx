@@ -24,9 +24,8 @@ interface UIChatBoxProps {
 export function UIChatBox(props: UIChatBoxProps) {
   const { model, conversationId } = props;
 
-  React.useEffect(() => {
-    mutate();
-  }, [ conversationId ])
+  const [ userMessage, setUserMessage ] = React.useState("");
+  const [ botMessage, setBotMessage ] = React.useState("");
 
   const { mutate, isPending, isError, data } = useMutation<ServerResponse<Conversation>>({
     retry: false,
@@ -35,43 +34,70 @@ export function UIChatBox(props: UIChatBoxProps) {
       const response = await ConversationAPI.getById({ id: conversationId });
       return response;
     },
-    onSuccess: (data) => {
-      console.log(data);
-    },
-    onError: (error: Error) => {
-      console.log(error);
-    },
   })
 
-  const renderMessages = () => {
-    if (!data) return null;
-    if (!data.data) return null;
-    if (!data.data.messages) return null;
+  React.useEffect(() => {
+    mutate();
+  }, [ conversationId ])
 
-    const messages: React.ReactNode[] = data.data.messages.map((message: Message) => {
+  const renderMessages = (): React.ReactNode[] => {
+    if (!data) return [];
+    if (!data.data) return [];
+    if (!data.data.messages) return [];
+
+    const messages: React.ReactNode[] = [];
+
+    const lastUserMsg = [...data.data.messages].reverse().find(m => m.role === "user")?.content?.trim();
+    const lastBotMsg = [...data.data.messages].reverse().find(m => m.role === "assistant")?.content?.trim();
+
+    data.data.messages.map((message: Message) => {
+
       if (message.role === "user") {
-        return (
+        messages.push(
           <Box key={uuid()} flex={1}>
             <Group justify="flex-end" p="xs">
               <Text ff="monospace"> {message.content} </Text>
             </Group>
           </Box>
         );
+      } else {
+        messages.push(
+          <Group key={uuid()} justify="flex-start" p="xs">
+            <Avatar color="indigo" name="J" />
+            <Text ff="monospace">
+              <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+                {message.content}
+              </ReactMarkdown>
+            </Text>
+          </Group>
+        );
       }
+    });
+
+    if (userMessage.trim() && userMessage !== lastUserMsg) {
+      messages.push(
+        <Box key="__userMessage" flex={1}>
+          <Group justify="flex-end" p="xs">
+            <Text ff="monospace"> {userMessage} </Text>
+          </Group>
+        </Box>
+      );
+    }
   
-      return (
-        <Group justify="flex-start" p="xs">
-          <Avatar color="yellow" name="J" />
+    if (botMessage.trim() && botMessage !== lastBotMsg) {
+      messages.push(
+        <Group key="__botMessage" justify="flex-start" p="xs">
+          <Avatar color="indigo" name="J" />
           <Text ff="monospace">
             <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-              {message.content}
+              {botMessage}
             </ReactMarkdown>
           </Text>
         </Group>
       );
-    });
+    }
     
-    return messages
+    return messages;
   }
 
   if (isError) {
@@ -107,10 +133,10 @@ export function UIChatBox(props: UIChatBoxProps) {
             <UIUserInput
               conversationId={conversationId} model={model}
               onBotResponse={(content: string) => {
-                console.log(content);
+                setBotMessage(content);
               }}
               onUserEnter={(prompt: string) => {
-                console.log(prompt);
+                setUserMessage(prompt);
               }}
             />
           </div>
