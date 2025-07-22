@@ -68,7 +68,7 @@ jobs:
             -D \
             "application.Application:app"
 
-          timeout 15 bash -c 'until curl -s http://localhost:5001/mock; do sleep 1; done'
+          timeout 15 bash -c 'while ! nc -z localhost 5001; do sleep 1; done'
 
           python test/UnitTest.py
 
