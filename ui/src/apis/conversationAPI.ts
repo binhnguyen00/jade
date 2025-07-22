@@ -1,4 +1,4 @@
-import { RequestMethod } from "types"
+import { MessageType, RequestMethod } from "types"
 
 import { API } from "./api";
 
@@ -25,6 +25,24 @@ export class ConversationAPI extends API {
     const init: RequestInit = {
       method: RequestMethod.GET,
       headers: this.initHeader(),
+    }
+    const response = await fetch(input, init);
+    if (!response.ok) {
+      throw new Error("ConversationAPI.ts: error fetching data");
+    }
+    return response.json();
+  }
+
+  public static async saveMessage({ id, message, role }: {
+    id: string;
+    message: string;
+    role: MessageType;
+  }) {
+    const input: RequestInfo = `${this.baseURL}/${this.Module.CONVERSATION}/${id}/message/save`;
+    const init: RequestInit = {
+      method: RequestMethod.POST,
+      headers: this.initHeader(),
+      body: JSON.stringify({ message, role }),
     }
     const response = await fetch(input, init);
     if (!response.ok) {

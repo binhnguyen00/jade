@@ -3,7 +3,7 @@ import logging;
 from typing import Optional;
 from mongodb.MongoDB import MongoDB;
 
-from .dto import ServiceResult;
+from ..dto.Service import ServiceResult;
 
 class ConversationService():
   log: logging.Logger
