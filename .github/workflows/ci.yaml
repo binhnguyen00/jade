@@ -66,6 +66,7 @@ jobs:
             --log-level info \
             --log-file "logs/app.log" \
             --pid "logs/gunicorn.pid" \
+            -D \
             "application.Application:application"
           sleep 5
 
