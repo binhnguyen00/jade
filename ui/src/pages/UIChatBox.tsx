@@ -3,12 +3,16 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 
+import { v4 as uuid } from "uuid";
 import { CloudAlert } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { LoadingOverlay, Stack, Box, Text, Center, Button, Group, Avatar, ScrollArea, AppShellFooter, Container } from "@mantine/core";
+import { 
+  LoadingOverlay, Stack, Box, Text, Center,
+  Button, Group, Avatar, ScrollArea, AppShellFooter,
+} from "@mantine/core";
 
 import { ConversationAPI } from "apis";
-import { Conversation, OpenRouterFreeModel } from "types";
+import { Conversation, Message, OpenRouterFreeModel, ServerResponse } from "types";
 
 import { UIUserInput } from "./UIUserInput";
 
@@ -20,28 +24,17 @@ interface UIChatBoxProps {
 export function UIChatBox(props: UIChatBoxProps) {
   const { model, conversationId } = props;
 
-  const [ tempMessages, setTempMessages ] = React.useState<any[]>([]);
-
   React.useEffect(() => {
-    console.log("conversationId", conversationId);
-
     mutate();
-    setTempMessages([]);
-  }, [conversationId])
+  }, [ conversationId ])
 
-  const getConversation = async () => {
-    const response = await ConversationAPI.getById({ id: conversationId });
-    return response;
-  }
-
-  const { mutate, isPending, isError, data: response } = useMutation<{
-    code: number;
-    message: string;
-    data: Conversation;
-  }>({
+  const { mutate, isPending, isError, data } = useMutation<ServerResponse<Conversation>>({
     retry: false,
     mutationKey: ["conversation"],
-    mutationFn: getConversation,
+    mutationFn: async () => {
+      const response = await ConversationAPI.getById({ id: conversationId });
+      return response;
+    },
     onSuccess: (data) => {
       console.log(data);
     },
@@ -50,27 +43,35 @@ export function UIChatBox(props: UIChatBoxProps) {
     },
   })
 
-  const renderMessage = (message: any) => {
-    if (message.role === "user") {
-      return (
-        <Box key={message.id} flex={1}>
-          <Group justify="flex-end" p="xs">
-            <Text ff="monospace"> {message.content} </Text>
-          </Group>
-        </Box>
-      );
-    }
+  const renderMessages = () => {
+    if (!data) return null;
+    if (!data.data) return null;
+    if (!data.data.messages) return null;
 
-    return (
-      <Group justify="flex-start" p="xs">
-        <Avatar color="yellow" name="J" />
-        <Text ff="monospace">
-          <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-            {message.content}
-          </ReactMarkdown>
-        </Text>
-      </Group>
-    );
+    const messages: React.ReactNode[] = data.data.messages.map((message: Message) => {
+      if (message.role === "user") {
+        return (
+          <Box key={uuid()} flex={1}>
+            <Group justify="flex-end" p="xs">
+              <Text ff="monospace"> {message.content} </Text>
+            </Group>
+          </Box>
+        );
+      }
+  
+      return (
+        <Group justify="flex-start" p="xs">
+          <Avatar color="yellow" name="J" />
+          <Text ff="monospace">
+            <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+              {message.content}
+            </ReactMarkdown>
+          </Text>
+        </Group>
+      );
+    });
+    
+    return messages
   }
 
   if (isError) {
@@ -95,12 +96,7 @@ export function UIChatBox(props: UIChatBoxProps) {
     <Box pos="relative">
       <ScrollArea>
         <Stack gap={0}>
-          {response?.data?.messages?.map((message: any) => (
-            renderMessage(message)
-          ))}
-          {tempMessages?.map((message: any) => (
-            renderMessage(message)
-          ))}
+          {renderMessages()}
           <div style={{ height: 500 }} />
         </Stack>
       </ScrollArea>
@@ -110,10 +106,10 @@ export function UIChatBox(props: UIChatBoxProps) {
           <div style={{ width: "60%" }}>
             <UIUserInput
               conversationId={conversationId} model={model}
-              onSuccessResponse={(content: string) => {
+              onBotResponse={(content: string) => {
                 console.log(content);
               }}
-              onSubmit={(prompt: string) => {
+              onUserEnter={(prompt: string) => {
                 console.log(prompt);
               }}
             />
