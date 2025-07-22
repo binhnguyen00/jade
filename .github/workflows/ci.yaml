@@ -35,6 +35,13 @@ jobs:
     container:
       image: python:3.12
 
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: --health-cmd "mongosh --eval 'db.serverStatus()'" --health-interval 10s --health-timeout 5s --health-retries 3
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,7 +68,7 @@ jobs:
             -D \
             "application.Application:app"
 
-          timeout 30 bash -c 'until curl -s http://localhost:5001/mock; do sleep 1; done'
+          timeout 15 bash -c 'until curl -s http://localhost:5001/mock; do sleep 1; done'
 
           python test/UnitTest.py
 
