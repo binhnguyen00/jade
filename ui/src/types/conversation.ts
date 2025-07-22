@@ -11,3 +11,8 @@ type Message = {
   content: string;
   createdAt: Date;
 }
+
+export enum MessageType {
+  USER      = "user",
+  ASSISTANT = "assistant",
+}
